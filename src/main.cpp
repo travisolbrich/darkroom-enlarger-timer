@@ -72,7 +72,7 @@ void testStrip() {
   
   while (!exit) {
     lcd.setCursor(0, 2);
-    lcd.print(getTime(step));
+    lcd.print(String(getTime(step), 1));
     lcd.print(" seconds        ");
 
     while (digitalRead(UP_BUTTON) == HIGH && digitalRead(DOWN_BUTTON) == HIGH && digitalRead(ENTER_BUTTON) == HIGH) {
@@ -84,7 +84,7 @@ void testStrip() {
       delay(200);
     }
 
-    if (digitalRead(DOWN_BUTTON) == LOW && step > 1) {
+    if (digitalRead(DOWN_BUTTON) == LOW && step > 0) {
       step-=1;
       delay(200);
     }
