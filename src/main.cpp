@@ -113,103 +113,65 @@ void printTestStripInfoLine(int strips, double time, Interval interval) {
   lcd.print(interval.label);
 }
 
+int incrementorInteraction(int initialValue, String* message, String* suffix, String (*valueToString)(int), int minVal, int maxVal){
+  int value = initialValue;
+  lcd.setCursor(0, 0);
+  lcd.print(*message);
+
+  bool exit = false;
+
+  while (!exit) {
+    lcd.setCursor(0, 2);
+    lcd.print(valueToString(value));
+    lcd.print(" ");
+    lcd.print(*suffix);
+    lcd.print("        ");
+
+    while (noButtonsPressed()) {
+      delay(10);
+    }
+
+    value = handleIncrementButtonPress(UP_BUTTON, 1, value);
+    value = handleIncrementButtonPress(DOWN_BUTTON, -1, value);
+
+    value = max(minVal, min(maxVal, value));
+
+    exit = checkExitCondition(ENTER_BUTTON);
+  }
+
+  return value;
+}
+
+String stripCountToString(int strips){
+  return String(strips);
+}
+
+String baseTimeToString(int timeIdx){
+  Serial.println(timeIdx);
+  return String(getTime(timeIdx), 1);
+}
+
+String intervalToString(int intervalIndex){
+  return intervals[intervalIndex].label;
+}
+
 void testStrip() {
-  // int preset = EEPROM.read(0);
   int preset = 8;
 
-  int strips = getStripCount(preset);
-
-  if (strips != EEPROM.read(0)) {
-    EEPROM.write(0, strips);
-  }
-
-  double baseTime = getBaseTime(strips);
-  Interval interval = getIntervals(strips, baseTime);
+  int strips = incrementorInteraction(preset, new String("How many strips?"), new String("strips"), stripCountToString, 1, 20);
 
   lcd.clear();
+  printTestStripInfoLine(strips);
 
+  int timeIdx = incrementorInteraction(0, new String("Base exposure time?"), new String("s"), baseTimeToString, -20, 20);
+  double baseTime = getTime(timeIdx);
+
+  lcd.clear();
+  printTestStripInfoLine(strips, baseTime);
+
+  int intervalIdx = incrementorInteraction(1, new String("Step size?"), new String("steps"), intervalToString, 0, 3);
+  Interval interval = intervals[intervalIdx];
+
+  lcd.clear();
   printTestStripInfoLine(strips, baseTime, interval);
-}
-
-int getStripCount(int strips) {
-  lcd.clear();
-  lcd.print("# test strips?");
-
-  bool exit = false;
-
-  while (!exit) {
-    lcd.setCursor(0, 2);
-    lcd.print(strips);
-    lcd.print(" strips        ");
-
-    while (noButtonsPressed()) {
-      delay(10);
-    }
-
-    strips = handleIncrementButtonPress(UP_BUTTON, 1, strips);
-    strips = handleIncrementButtonPress(DOWN_BUTTON, -1, strips);
-    exit = checkExitCondition(ENTER_BUTTON);
-  }
-
-  return strips;
-}
-
-double getBaseTime(int stripCount) {
-  lcd.clear();
-  lcd.print("Base exposure time?");
-  
-  printTestStripInfoLine(stripCount);
-
-  bool exit = false;
-  int step = 0;
-  
-  while (!exit) {
-    lcd.setCursor(0, 2);
-    lcd.print(String(getTime(step), 1));
-    lcd.print(" seconds        ");
-
-    while (noButtonsPressed()) {
-      delay(10);
-    }
-
-    step = handleIncrementButtonPress(UP_BUTTON, 1, step);
-    step = handleIncrementButtonPress(DOWN_BUTTON, -1, step);
-    exit = checkExitCondition(ENTER_BUTTON);
-  }
-
-  return getTime(step);
-}
-
-Interval getIntervals(int stripCount, double baseTime){
-  int intervalIndex = 1;
-
-  lcd.clear();
-  lcd.print("Step size?");
-  lcd.setCursor(0, 2);
-  lcd.print(intervals[intervalIndex].label);
-  lcd.print(" step");
-
-  printTestStripInfoLine(stripCount, baseTime);
-
-  bool exit = false;
-
-  while (!exit) {
-    lcd.setCursor(0, 2);
-    lcd.print(intervals[intervalIndex].label);
-    lcd.print(" steps        ");
-
-    while (noButtonsPressed()) {
-      delay(10);
-    }
-
-    intervalIndex = handleIncrementButtonPress(UP_BUTTON, 1, intervalIndex);
-    intervalIndex = handleIncrementButtonPress(DOWN_BUTTON, -1, intervalIndex);
-    
-    // Restrict to valid indicies
-    intervalIndex = max(0, min(3, intervalIndex));
-
-    exit = checkExitCondition(ENTER_BUTTON);
-  }
-
-  return intervals[intervalIndex];
 }
