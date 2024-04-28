@@ -1,13 +1,13 @@
 #include <Arduino.h>
 #include <LiquidCrystal.h>
-
+#include "ButtonConfiguration.h"
 
 
 class IncrementorInteraction {
 
 
 public:
-    IncrementorInteraction(LiquidCrystal& lcd, int incrementPin, int decrementPin, int rightPin, int backPin, int initialValue);
+    IncrementorInteraction(LiquidCrystal& lcd, ButtonConfiguration buttonConfiguration, int initialValue);
     int handleInteraction();
     virtual String formatString(int value);
     const int BACK_CODE = -69;
@@ -19,10 +19,7 @@ protected:
     int maxVal;
     LiquidCrystal& lcd;
 
-    int incrementPin;
-    int decrementPin;
-    int rightPin;
-    int backPin;
+    ButtonConfiguration buttonConfiguration;
 
 private:
     int handleIncrementButtonPress(int button, int increment, int value);
@@ -34,13 +31,13 @@ private:
 
 class StripCountIncrementorInteraction : public IncrementorInteraction {
 public:
-    StripCountIncrementorInteraction(LiquidCrystal &lcd, int incrementPin, int decrementPin, int rightPin, int backPin, int initialValue);
+    StripCountIncrementorInteraction(LiquidCrystal &lcd, ButtonConfiguration buttonConfiguration, int initialValue);
     String formatString(int value) override;
 };
 
 class TimeIncrementorInteraction : public IncrementorInteraction {
 public:
-    TimeIncrementorInteraction(LiquidCrystal& lcd, int incrementPin, int decrementPin, int rightPin, int backPin, int initialValue);
+    TimeIncrementorInteraction(LiquidCrystal &lcd, ButtonConfiguration buttonConfiguration, int initialValue);
     String formatString(int value) override;
 
 private:
@@ -49,6 +46,6 @@ private:
 
 class IntervalIncrementorInteraction : public IncrementorInteraction {
 public:
-    IntervalIncrementorInteraction(LiquidCrystal& lcd, int incrementPin, int decrementPin, int rightPin, int backPin, int initialValue);
+    IntervalIncrementorInteraction(LiquidCrystal &lcd, ButtonConfiguration buttonConfiguration, int initialValue);
     String formatString(int value) override;
 };

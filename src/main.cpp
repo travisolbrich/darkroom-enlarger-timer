@@ -7,6 +7,7 @@
 
 #include "IncrementorInteraction/IncrementorInteraction.h"
 #include "Interval.h"
+#include "ButtonConfiguration.h"
 
 // based on https://www.tmax100.com/photo/pdf/fstoptiming.pdf
 
@@ -17,6 +18,8 @@ const int UP_BUTTON = 7;
 const int DOWN_BUTTON = 6;
 const int ENTER_BUTTON = 5;
 const int BACK_BUTTON = 4;
+
+ButtonConfiguration buttonConfiguration = {UP_BUTTON, DOWN_BUTTON, ENTER_BUTTON, BACK_BUTTON};
 
 double baseExposure = 8;
 
@@ -97,17 +100,13 @@ void testStrip() {
   int timeIdx = 0;
   int intervalIdx = 0;
   double baseTime = 0;
+  Interval interval = intervals[0];
 
-  StripCountIncrementorInteraction stripCountIncrementorInteraction(lcd, UP_BUTTON, DOWN_BUTTON, ENTER_BUTTON, BACK_BUTTON, strips);
-  TimeIncrementorInteraction timeIncrementorInteraction(lcd, UP_BUTTON, DOWN_BUTTON, ENTER_BUTTON, BACK_BUTTON, timeIdx);
-  IntervalIncrementorInteraction intervalIncrementorInteraction(lcd, UP_BUTTON, DOWN_BUTTON, ENTER_BUTTON, BACK_BUTTON, intervalIdx);
-
-
+  StripCountIncrementorInteraction stripCountIncrementorInteraction(lcd, buttonConfiguration, strips);
+  TimeIncrementorInteraction timeIncrementorInteraction(lcd, buttonConfiguration, timeIdx);
+  IntervalIncrementorInteraction intervalIncrementorInteraction(lcd, buttonConfiguration, intervalIdx);
 
   TestStripMenuStates state = STRIP_COUNT;
-
- 
-  Interval interval = intervals[0];
 
   while (state != DONE) {
     switch (state) {

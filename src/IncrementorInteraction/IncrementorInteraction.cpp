@@ -1,9 +1,10 @@
 #include "IncrementorInteraction.h"
 #include <LiquidCrystal.h>
 #include "Interval.h"
+#include "ButtonConfiguration.h"
 
-IncrementorInteraction::IncrementorInteraction(LiquidCrystal& lcd, int incrementPin, int decrementPin, int rightPin, int backPin, int initialValue)
-    : lcd(lcd), incrementPin(incrementPin), decrementPin(decrementPin), rightPin(rightPin), backPin(backPin), selection(initialValue)
+IncrementorInteraction::IncrementorInteraction(LiquidCrystal& lcd, ButtonConfiguration buttonConfiguration, int initialValue)
+    : lcd(lcd), buttonConfiguration(buttonConfiguration), selection(initialValue)
 {
 }
 
@@ -31,8 +32,8 @@ int IncrementorInteraction::handleInteraction()
             delay(10);
         }
 
-        selection = handleIncrementButtonPress(incrementPin, 1, selection);
-        selection = handleIncrementButtonPress(decrementPin, -1, selection);
+        selection = handleIncrementButtonPress(buttonConfiguration.upButton, 1, selection);
+        selection = handleIncrementButtonPress(buttonConfiguration.downButton, -1, selection);
 
         selection = max(minVal, min(maxVal, selection));
 
@@ -60,7 +61,7 @@ int IncrementorInteraction::handleIncrementButtonPress(int button, int increment
 
 bool IncrementorInteraction::checkBackCondition()
 {
-    if (digitalRead(backPin) == LOW)
+    if (digitalRead(buttonConfiguration.leftButton) == LOW)
     {
         delay(200);
         return true;
@@ -71,12 +72,15 @@ bool IncrementorInteraction::checkBackCondition()
 
 bool IncrementorInteraction::noButtonsPressed()
 {
-    return digitalRead(incrementPin) == HIGH && digitalRead(decrementPin) == HIGH && digitalRead(rightPin) == HIGH && digitalRead(backPin) == HIGH;
+    return digitalRead(buttonConfiguration.upButton) == HIGH && 
+    digitalRead(buttonConfiguration.downButton) == HIGH && 
+    digitalRead(buttonConfiguration.leftButton) == HIGH && 
+    digitalRead(buttonConfiguration.rightButton) == HIGH;
 }
 
 bool IncrementorInteraction::checkExitCondition()
 {
-    if (digitalRead(rightPin) == LOW){
+    if (digitalRead(buttonConfiguration.rightButton) == LOW){
         delay(200);
         return true;
     }
@@ -85,7 +89,7 @@ bool IncrementorInteraction::checkExitCondition()
 }
 
 /// StripCountIncrementorInteraction
-StripCountIncrementorInteraction::StripCountIncrementorInteraction(LiquidCrystal& lcd, int incrementPin, int decrementPin, int rightPin, int backPin, int initialValue) : IncrementorInteraction(lcd, incrementPin, decrementPin, rightPin, backPin, initialValue)
+StripCountIncrementorInteraction::StripCountIncrementorInteraction(LiquidCrystal& lcd, ButtonConfiguration buttonConfiguration, int initialValue) : IncrementorInteraction(lcd, buttonConfiguration, initialValue)
 {
     message = "Strips: ";
     suffix = "";
@@ -99,7 +103,7 @@ String StripCountIncrementorInteraction::formatString(int value)
 }
 
 /// TimeIncrementorInteraction
-TimeIncrementorInteraction::TimeIncrementorInteraction(LiquidCrystal& lcd, int incrementPin, int decrementPin, int rightPin, int backPin, int initialValue) : IncrementorInteraction(lcd, incrementPin, decrementPin, rightPin, backPin, initialValue)
+TimeIncrementorInteraction::TimeIncrementorInteraction(LiquidCrystal& lcd, ButtonConfiguration buttonConfiguration, int initialValue) : IncrementorInteraction(lcd, buttonConfiguration, initialValue)
 {
     message = "Time: ";
     suffix = "s";
@@ -120,7 +124,7 @@ double TimeIncrementorInteraction::getTime(int step)
 }
 
 /// IntervalIncrementorInteraction
-IntervalIncrementorInteraction::IntervalIncrementorInteraction(LiquidCrystal& lcd, int incrementPin, int decrementPin, int rightPin, int backPin, int initalValue) : IncrementorInteraction(lcd, incrementPin, decrementPin, rightPin, backPin, initalValue)
+IntervalIncrementorInteraction::IntervalIncrementorInteraction(LiquidCrystal& lcd, ButtonConfiguration buttonConfiguration, int initalValue) : IncrementorInteraction(lcd, buttonConfiguration, initalValue)
 {
     message = "Interval: ";
     suffix = " steps";
