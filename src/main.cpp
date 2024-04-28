@@ -22,8 +22,6 @@ const int BACK_BUTTON = 4;
 
 ButtonConfiguration buttonConfiguration = {UP_BUTTON, DOWN_BUTTON, ENTER_BUTTON, BACK_BUTTON};
 
-const double baseExposure = 8;
-
 TestStripMenu testStripMenu(lcd, buttonConfiguration);
 
 void setup()
@@ -37,8 +35,9 @@ void setup()
   pinMode(ENTER_BUTTON, INPUT_PULLUP);
   pinMode(BACK_BUTTON, INPUT_PULLUP);
 
-  // todo: remove debug serial print later
   auto config = testStripMenu.run();
+
+  // todo: remove debug serial print later
   Serial.println("");
   Serial.print("Strips: ");
   Serial.println(config.stripCount);
