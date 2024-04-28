@@ -2,8 +2,6 @@
 #include <IncrementorInteraction/IncrementorInteraction.h>
 #include "Interval.h"
 
-const double BASE_TIME = 8.0;
-
 TestStripMenu::TestStripMenu(LiquidCrystal &lcd, ButtonConfiguration &buttonConfiguration) : lcd(lcd), buttonConfiguration(buttonConfiguration)
 {
 }
@@ -95,5 +93,6 @@ TestStripConfiguration TestStripMenu::run()
     }
 
     printTestStripInfoLine(strips, testStripBaseTime, interval);
+
     return {strips, testStripBaseTime, interval};
 }
