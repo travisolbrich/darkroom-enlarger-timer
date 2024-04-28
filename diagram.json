@@ -9,14 +9,14 @@
       "type": "wokwi-pushbutton",
       "id": "btn1",
       "top": -32.2,
-      "left": 528,
+      "left": 595.2,
       "attrs": { "color": "green", "key": "ArrowUp" }
     },
     {
       "type": "wokwi-pushbutton",
       "id": "btn2",
       "top": 44.6,
-      "left": 528,
+      "left": 595.2,
       "attrs": { "color": "green", "key": "ArrowDown" }
     },
     {
@@ -26,7 +26,14 @@
       "left": 672,
       "attrs": { "color": "green", "key": "ArrowRight" }
     },
-    { "type": "wokwi-relay-module", "id": "relay1", "top": -191.8, "left": 576, "attrs": {} }
+    { "type": "wokwi-relay-module", "id": "relay1", "top": -191.8, "left": 576, "attrs": {} },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn4",
+      "top": 44.6,
+      "left": 508.8,
+      "attrs": { "color": "green", "key": "ArrowLeft" }
+    }
   ],
   "connections": [
     [ "uno:5V", "lcd1:A", "red", [ "v57.5", "h-274.6", "v-326.4", "h201.7" ] ],
@@ -36,16 +43,18 @@
     [ "uno:8", "lcd1:D7", "green", [ "v-67.2", "h-95.9" ] ],
     [ "lcd1:D6", "uno:9", "green", [ "v76.8", "h-153.4" ] ],
     [ "uno:10", "lcd1:D5", "green", [ "v-57.6", "h-95.4" ] ],
-    [ "uno:GND.3", "btn2:2.l", "black", [ "h-5.6", "v67.1", "h220.8", "v-221" ] ],
-    [ "btn2:2.l", "btn1:2.l", "black", [ "h-28.8", "v-76.8" ] ],
-    [ "btn1:1.l", "uno:7", "orange", [ "h0" ] ],
+    [ "btn1:1.l", "uno:7", "gold", [ "h0" ] ],
     [ "lcd1:D4", "uno:11", "green", [ "v86.4", "h96" ] ],
-    [ "btn2:1.l", "uno:6", "orange", [ "h-96", "v-67.2", "h-128.5" ] ],
+    [ "btn2:1.l", "uno:6", "gold", [ "h-9.6", "v-48", "h-282.1" ] ],
     [ "btn3:1.l", "uno:5", "gold", [ "v48", "h-249.6", "v-105.6", "h-109.4" ] ],
     [ "btn2:2.r", "btn3:2.l", "black", [ "h0" ] ],
-    [ "relay1:GND", "btn1:2.l", "black", [ "h-76.8", "v162.6" ] ],
+    [ "relay1:GND", "btn1:2.l", "black", [ "h-67.2", "v162.6" ] ],
     [ "relay1:VCC", "uno:5V", "red", [ "h-86.4", "v460.8", "h-220.8", "v-57.5" ] ],
-    [ "uno:2", "relay1:IN", "green", [ "v-38.4", "h71.3", "v-163" ] ]
+    [ "uno:2", "relay1:IN", "green", [ "v-19.2", "h71.3", "v-182.2" ] ],
+    [ "btn4:2.r", "btn2:2.l", "black", [ "h0" ] ],
+    [ "btn4:2.l", "uno:GND.2", "black", [ "h-9.6", "v221", "h-220.8" ] ],
+    [ "btn4:1.l", "uno:4", "gold", [ "h-28.8", "v-38.4", "h-163.2" ] ],
+    [ "btn1:2.r", "btn3:2.r", "black", [ "h96.2", "v77" ] ]
   ],
   "dependencies": {}
 }

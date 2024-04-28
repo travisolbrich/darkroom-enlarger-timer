@@ -5,6 +5,9 @@
 #include <SoftwareSerial.h>
 #include <EEPROM.h>
 
+#include "IncrementorInteraction/IncrementorInteraction.h"
+#include "Interval.h"
+
 // based on https://www.tmax100.com/photo/pdf/fstoptiming.pdf
 
 const int rs = 13, en = 12, d4 = 11, d5 = 10, d6 = 9, d7 = 8;
@@ -13,47 +16,12 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 const int UP_BUTTON = 7;
 const int DOWN_BUTTON = 6;
 const int ENTER_BUTTON = 5;
+const int BACK_BUTTON = 4;
 
 double baseExposure = 8;
 
-struct Interval {
-  int interval;
-  const char* label;
-};
-
-Interval intervals[] = {
-  {12, "1"},
-  {4, "1/3"},
-  {2, "1/6"},
-  {1, "1/12"}
-};
-
 void testStrip();
-int getStripCount(int strips);
-double getBaseTime(int stripCount);
-Interval getIntervals(int stripCount, double baseTime);
 
-int handleIncrementButtonPress(int pin, int increment, int current) {
-  if (digitalRead(pin) == LOW) {
-    current += increment;
-    delay(200);
-  }
-
-  return current;
-}
-
-bool checkExitCondition(int pin) {
-  if (digitalRead(pin) == LOW) {
-      delay(200);
-      return true;
-
-  }
-  return false;
-}
-
-bool noButtonsPressed() {
-  return digitalRead(UP_BUTTON) == HIGH && digitalRead(DOWN_BUTTON) == HIGH && digitalRead(ENTER_BUTTON) == HIGH;
-}
 
 void setup() {
   Serial.begin(9600);
@@ -63,6 +31,7 @@ void setup() {
   pinMode(UP_BUTTON, INPUT_PULLUP);
   pinMode(DOWN_BUTTON, INPUT_PULLUP);
   pinMode(ENTER_BUTTON, INPUT_PULLUP);
+  pinMode(BACK_BUTTON, INPUT_PULLUP);
   
   for ( int strip = 0; strip < 13; strip++) {
     // step by thirds
@@ -96,6 +65,8 @@ double getTime(int step) {
 
 void printTestStripInfoLine(int strips) {
   lcd.setCursor(0, 3);
+  lcd.print("                    ");
+  lcd.setCursor(0, 3);
   lcd.print("#");
   lcd.print(strips);
 }
@@ -113,65 +84,72 @@ void printTestStripInfoLine(int strips, double time, Interval interval) {
   lcd.print(interval.label);
 }
 
-int incrementorInteraction(int initialValue, String* message, String* suffix, String (*valueToString)(int), int minVal, int maxVal){
-  int value = initialValue;
-  lcd.setCursor(0, 0);
-  lcd.print(*message);
 
-  bool exit = false;
-
-  while (!exit) {
-    lcd.setCursor(0, 2);
-    lcd.print(valueToString(value));
-    lcd.print(" ");
-    lcd.print(*suffix);
-    lcd.print("        ");
-
-    while (noButtonsPressed()) {
-      delay(10);
-    }
-
-    value = handleIncrementButtonPress(UP_BUTTON, 1, value);
-    value = handleIncrementButtonPress(DOWN_BUTTON, -1, value);
-
-    value = max(minVal, min(maxVal, value));
-
-    exit = checkExitCondition(ENTER_BUTTON);
-  }
-
-  return value;
-}
-
-String stripCountToString(int strips){
-  return String(strips);
-}
-
-String baseTimeToString(int timeIdx){
-  Serial.println(timeIdx);
-  return String(getTime(timeIdx), 1);
-}
-
-String intervalToString(int intervalIndex){
-  return intervals[intervalIndex].label;
-}
+enum TestStripMenuStates {
+  STRIP_COUNT,
+  TIME,
+  INTERVAL_STEP, 
+  DONE
+};
 
 void testStrip() {
+  StripCountIncrementorInteraction stripCountIncrementorInteraction(lcd, UP_BUTTON, DOWN_BUTTON, ENTER_BUTTON, BACK_BUTTON);
+  TimeIncrementorInteraction timeIncrementorInteraction(lcd, UP_BUTTON, DOWN_BUTTON, ENTER_BUTTON, BACK_BUTTON);
+  IntervalIncrementorInteraction intervalIncrementorInteraction(lcd, UP_BUTTON, DOWN_BUTTON, ENTER_BUTTON, BACK_BUTTON);
+
+
   int preset = 8;
 
-  int strips = incrementorInteraction(preset, new String("How many strips?"), new String("strips"), stripCountToString, 1, 20);
+  TestStripMenuStates state = STRIP_COUNT;
 
-  lcd.clear();
-  printTestStripInfoLine(strips);
+  int strips = 0;
+  int timeIdx = 0;
+  int intervalIdx = 0;
+  double baseTime = 0;
+  Interval interval = intervals[0];
 
-  int timeIdx = incrementorInteraction(0, new String("Base exposure time?"), new String("s"), baseTimeToString, -20, 20);
-  double baseTime = getTime(timeIdx);
+  while (state != DONE) {
+    switch (state) {
+      case STRIP_COUNT:
+        strips = stripCountIncrementorInteraction.handleInteraction(preset);
+        
+        if (strips == stripCountIncrementorInteraction.BACK_CODE) {
+          return;
+        }
 
-  lcd.clear();
-  printTestStripInfoLine(strips, baseTime);
+        state = TIME;
+        break;
 
-  int intervalIdx = incrementorInteraction(1, new String("Step size?"), new String("steps"), intervalToString, 0, 3);
-  Interval interval = intervals[intervalIdx];
+      case TIME:
+        printTestStripInfoLine(strips);
+        timeIdx = timeIncrementorInteraction.handleInteraction(0);
 
-  lcd.clear();
+        if (timeIdx == timeIncrementorInteraction.BACK_CODE) {
+          state = STRIP_COUNT;
+          break;
+        }
+
+        baseTime = getTime(timeIdx);
+        
+        state = INTERVAL_STEP;
+        break;
+
+      case INTERVAL_STEP:
+        printTestStripInfoLine(strips, baseTime);
+        intervalIdx = intervalIncrementorInteraction.handleInteraction(0);
+        
+        if (intervalIdx == intervalIncrementorInteraction.BACK_CODE) {
+          state = TIME;
+          break;
+        }
+        
+        interval = intervals[intervalIdx];
+        state = DONE;
+        break;
+    }
+
+    lcd.clear();
+  }
+
   printTestStripInfoLine(strips, baseTime, interval);
 }
