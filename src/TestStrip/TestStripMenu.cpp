@@ -1,6 +1,6 @@
 #include "TestStripMenu.h"
 #include <IncrementorInteraction/IncrementorInteraction.h>
-#include "Interval.h"
+#include "Interval/Interval.h"
 
 TestStripMenu::TestStripMenu(LiquidCrystal &lcd, ButtonConfiguration &buttonConfiguration) : lcd(lcd), buttonConfiguration(buttonConfiguration)
 {

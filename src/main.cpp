@@ -6,7 +6,7 @@
 #include <EEPROM.h>
 
 #include "IncrementorInteraction/IncrementorInteraction.h"
-#include "Interval.h"
+#include "Interval/Interval.h"
 #include "ButtonConfiguration.h"
 #include "TestStrip/TestStripMenu.h"
 

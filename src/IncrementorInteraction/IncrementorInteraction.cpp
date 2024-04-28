@@ -1,6 +1,6 @@
 #include "IncrementorInteraction.h"
 #include <LiquidCrystal.h>
-#include "Interval.h"
+#include "Interval/Interval.h"
 #include "ButtonConfiguration.h"
 
 IncrementorInteraction::IncrementorInteraction(LiquidCrystal &lcd, ButtonConfiguration buttonConfiguration, int initialValue)

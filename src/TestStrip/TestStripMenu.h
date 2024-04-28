@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Interval.h"
+#include "Interval/Interval.h"
 #include "ButtonConfiguration.h"
 #include <LiquidCrystal.h>
 
