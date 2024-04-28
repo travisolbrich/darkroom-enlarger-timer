@@ -7,8 +7,8 @@ class IncrementorInteraction {
 
 
 public:
-    IncrementorInteraction(LiquidCrystal& lcd, int incrementPin, int decrementPin, int rightPin, int backPin);
-    int handleInteraction(int initialValue);
+    IncrementorInteraction(LiquidCrystal& lcd, int incrementPin, int decrementPin, int rightPin, int backPin, int initialValue);
+    int handleInteraction();
     virtual String formatString(int value);
     const int BACK_CODE = -69;
 
@@ -29,17 +29,18 @@ private:
     bool noButtonsPressed();
     bool checkExitCondition();
     bool checkBackCondition();
+    int selection;
 };
 
 class StripCountIncrementorInteraction : public IncrementorInteraction {
 public:
-    StripCountIncrementorInteraction(LiquidCrystal& lcd, int incrementPin, int decrementPin, int rightPin, int backPin);
+    StripCountIncrementorInteraction(LiquidCrystal &lcd, int incrementPin, int decrementPin, int rightPin, int backPin, int initialValue);
     String formatString(int value) override;
 };
 
 class TimeIncrementorInteraction : public IncrementorInteraction {
 public:
-    TimeIncrementorInteraction(LiquidCrystal& lcd, int incrementPin, int decrementPin, int rightPin, int backPin);
+    TimeIncrementorInteraction(LiquidCrystal& lcd, int incrementPin, int decrementPin, int rightPin, int backPin, int initialValue);
     String formatString(int value) override;
 
 private:
@@ -48,6 +49,6 @@ private:
 
 class IntervalIncrementorInteraction : public IncrementorInteraction {
 public:
-    IntervalIncrementorInteraction(LiquidCrystal& lcd, int incrementPin, int decrementPin, int rightPin, int backPin);
+    IntervalIncrementorInteraction(LiquidCrystal& lcd, int incrementPin, int decrementPin, int rightPin, int backPin, int initialValue);
     String formatString(int value) override;
 };

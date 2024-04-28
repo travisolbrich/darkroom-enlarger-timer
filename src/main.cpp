@@ -93,25 +93,26 @@ enum TestStripMenuStates {
 };
 
 void testStrip() {
-  StripCountIncrementorInteraction stripCountIncrementorInteraction(lcd, UP_BUTTON, DOWN_BUTTON, ENTER_BUTTON, BACK_BUTTON);
-  TimeIncrementorInteraction timeIncrementorInteraction(lcd, UP_BUTTON, DOWN_BUTTON, ENTER_BUTTON, BACK_BUTTON);
-  IntervalIncrementorInteraction intervalIncrementorInteraction(lcd, UP_BUTTON, DOWN_BUTTON, ENTER_BUTTON, BACK_BUTTON);
-
-
-  int preset = 8;
-
-  TestStripMenuStates state = STRIP_COUNT;
-
-  int strips = 0;
+  int strips = 8;
   int timeIdx = 0;
   int intervalIdx = 0;
   double baseTime = 0;
+
+  StripCountIncrementorInteraction stripCountIncrementorInteraction(lcd, UP_BUTTON, DOWN_BUTTON, ENTER_BUTTON, BACK_BUTTON, strips);
+  TimeIncrementorInteraction timeIncrementorInteraction(lcd, UP_BUTTON, DOWN_BUTTON, ENTER_BUTTON, BACK_BUTTON, timeIdx);
+  IntervalIncrementorInteraction intervalIncrementorInteraction(lcd, UP_BUTTON, DOWN_BUTTON, ENTER_BUTTON, BACK_BUTTON, intervalIdx);
+
+
+
+  TestStripMenuStates state = STRIP_COUNT;
+
+ 
   Interval interval = intervals[0];
 
   while (state != DONE) {
     switch (state) {
       case STRIP_COUNT:
-        strips = stripCountIncrementorInteraction.handleInteraction(preset);
+        strips = stripCountIncrementorInteraction.handleInteraction();
         
         if (strips == stripCountIncrementorInteraction.BACK_CODE) {
           return;
@@ -122,7 +123,7 @@ void testStrip() {
 
       case TIME:
         printTestStripInfoLine(strips);
-        timeIdx = timeIncrementorInteraction.handleInteraction(0);
+        timeIdx = timeIncrementorInteraction.handleInteraction();
 
         if (timeIdx == timeIncrementorInteraction.BACK_CODE) {
           state = STRIP_COUNT;
@@ -136,7 +137,7 @@ void testStrip() {
 
       case INTERVAL_STEP:
         printTestStripInfoLine(strips, baseTime);
-        intervalIdx = intervalIncrementorInteraction.handleInteraction(0);
+        intervalIdx = intervalIncrementorInteraction.handleInteraction();
         
         if (intervalIdx == intervalIncrementorInteraction.BACK_CODE) {
           state = TIME;

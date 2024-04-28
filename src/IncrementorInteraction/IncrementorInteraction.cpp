@@ -2,8 +2,8 @@
 #include <LiquidCrystal.h>
 #include "Interval.h"
 
-IncrementorInteraction::IncrementorInteraction(LiquidCrystal& lcd, int incrementPin, int decrementPin, int rightPin, int backPin)
-    : lcd(lcd), incrementPin(incrementPin), decrementPin(decrementPin), rightPin(rightPin), backPin(backPin)
+IncrementorInteraction::IncrementorInteraction(LiquidCrystal& lcd, int incrementPin, int decrementPin, int rightPin, int backPin, int initialValue)
+    : lcd(lcd), incrementPin(incrementPin), decrementPin(decrementPin), rightPin(rightPin), backPin(backPin), selection(initialValue)
 {
 }
 
@@ -12,9 +12,8 @@ String IncrementorInteraction::formatString(int value)
     return String(value);
 }
 
-int IncrementorInteraction::handleInteraction(int initialValue)
+int IncrementorInteraction::handleInteraction()
 {
-    int value = initialValue;
     lcd.setCursor(0, 0);
     lcd.print(message);
 
@@ -23,7 +22,7 @@ int IncrementorInteraction::handleInteraction(int initialValue)
     while (!exit)
     {
         lcd.setCursor(0, 2);
-        lcd.print(formatString(value));
+        lcd.print(formatString(selection));
         lcd.print(suffix);
         lcd.print("        ");
 
@@ -32,10 +31,10 @@ int IncrementorInteraction::handleInteraction(int initialValue)
             delay(10);
         }
 
-        value = handleIncrementButtonPress(incrementPin, 1, value);
-        value = handleIncrementButtonPress(decrementPin, -1, value);
+        selection = handleIncrementButtonPress(incrementPin, 1, selection);
+        selection = handleIncrementButtonPress(decrementPin, -1, selection);
 
-        value = max(minVal, min(maxVal, value));
+        selection = max(minVal, min(maxVal, selection));
 
         exit = checkExitCondition();
         if (checkBackCondition())
@@ -45,7 +44,7 @@ int IncrementorInteraction::handleInteraction(int initialValue)
         }
     }
 
-    return value;
+    return selection;
 }
 
 int IncrementorInteraction::handleIncrementButtonPress(int button, int increment, int value)
@@ -86,7 +85,7 @@ bool IncrementorInteraction::checkExitCondition()
 }
 
 /// StripCountIncrementorInteraction
-StripCountIncrementorInteraction::StripCountIncrementorInteraction(LiquidCrystal& lcd, int incrementPin, int decrementPin, int rightPin, int backPin) : IncrementorInteraction(lcd, incrementPin, decrementPin, rightPin, backPin)
+StripCountIncrementorInteraction::StripCountIncrementorInteraction(LiquidCrystal& lcd, int incrementPin, int decrementPin, int rightPin, int backPin, int initialValue) : IncrementorInteraction(lcd, incrementPin, decrementPin, rightPin, backPin, initialValue)
 {
     message = "Strips: ";
     suffix = "";
@@ -100,7 +99,7 @@ String StripCountIncrementorInteraction::formatString(int value)
 }
 
 /// TimeIncrementorInteraction
-TimeIncrementorInteraction::TimeIncrementorInteraction(LiquidCrystal& lcd, int incrementPin, int decrementPin, int rightPin, int backPin) : IncrementorInteraction(lcd, incrementPin, decrementPin, rightPin, backPin)
+TimeIncrementorInteraction::TimeIncrementorInteraction(LiquidCrystal& lcd, int incrementPin, int decrementPin, int rightPin, int backPin, int initialValue) : IncrementorInteraction(lcd, incrementPin, decrementPin, rightPin, backPin, initialValue)
 {
     message = "Time: ";
     suffix = "s";
@@ -121,7 +120,7 @@ double TimeIncrementorInteraction::getTime(int step)
 }
 
 /// IntervalIncrementorInteraction
-IntervalIncrementorInteraction::IntervalIncrementorInteraction(LiquidCrystal& lcd, int incrementPin, int decrementPin, int rightPin, int backPin) : IncrementorInteraction(lcd, incrementPin, decrementPin, rightPin, backPin)
+IntervalIncrementorInteraction::IntervalIncrementorInteraction(LiquidCrystal& lcd, int incrementPin, int decrementPin, int rightPin, int backPin, int initalValue) : IncrementorInteraction(lcd, incrementPin, decrementPin, rightPin, backPin, initalValue)
 {
     message = "Interval: ";
     suffix = " steps";
