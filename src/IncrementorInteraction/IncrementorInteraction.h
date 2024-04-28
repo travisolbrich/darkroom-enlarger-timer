@@ -1,13 +1,14 @@
+#pragma once
+
 #include <Arduino.h>
 #include <LiquidCrystal.h>
 #include "ButtonConfiguration.h"
 
-
-class IncrementorInteraction {
-
+class IncrementorInteraction
+{
 
 public:
-    IncrementorInteraction(LiquidCrystal& lcd, ButtonConfiguration buttonConfiguration, int initialValue);
+    IncrementorInteraction(LiquidCrystal &lcd, ButtonConfiguration buttonConfiguration, int initialValue);
     int handleInteraction();
     virtual String formatString(int value);
     const int BACK_CODE = -69;
@@ -17,7 +18,7 @@ protected:
     String suffix;
     int minVal;
     int maxVal;
-    LiquidCrystal& lcd;
+    LiquidCrystal &lcd;
 
     ButtonConfiguration buttonConfiguration;
 
@@ -29,22 +30,25 @@ private:
     int selection;
 };
 
-class StripCountIncrementorInteraction : public IncrementorInteraction {
+class StripCountIncrementorInteraction : public IncrementorInteraction
+{
 public:
     StripCountIncrementorInteraction(LiquidCrystal &lcd, ButtonConfiguration buttonConfiguration, int initialValue);
     String formatString(int value) override;
 };
 
-class TimeIncrementorInteraction : public IncrementorInteraction {
+class TimeIncrementorInteraction : public IncrementorInteraction
+{
 public:
-    TimeIncrementorInteraction(LiquidCrystal &lcd, ButtonConfiguration buttonConfiguration, int initialValue);
+    TimeIncrementorInteraction(LiquidCrystal &lcd, ButtonConfiguration buttonConfiguration, int initialValue, double baseTime);
     String formatString(int value) override;
 
 private:
-    double getTime(int step);
+    double baseTime;
 };
 
-class IntervalIncrementorInteraction : public IncrementorInteraction {
+class IntervalIncrementorInteraction : public IncrementorInteraction
+{
 public:
     IntervalIncrementorInteraction(LiquidCrystal &lcd, ButtonConfiguration buttonConfiguration, int initialValue);
     String formatString(int value) override;
