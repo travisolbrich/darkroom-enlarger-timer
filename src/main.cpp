@@ -10,6 +10,7 @@
 #include "Interval/Interval.h"
 #include "ButtonConfiguration.h"
 #include "TestStrip/TestStripMenu.h"
+#include "TestStrip/TestStripUtil.h"
 
 // based on https://www.tmax100.com/photo/pdf/fstoptiming.pdf
 
@@ -24,6 +25,8 @@ const int START_STOP_BUTTON = A0;
 
 const int BUZZER_PIN = 3;
 const int RELAY_PIN = 2;
+
+const char CLEAR_ROW[] = "                    ";
 
 ButtonConfiguration buttonConfiguration = {UP_BUTTON, DOWN_BUTTON, ENTER_BUTTON, BACK_BUTTON, START_STOP_BUTTON};
 
@@ -53,30 +56,24 @@ void setup()
   auto config = testStripMenu.run();
 
   // todo: remove debug serial print later
- /** Serial.println("");
-  Serial.print("Strips: ");
-  Serial.println(config.stripCount);
-  Serial.print("Time: ");
-  Serial.println(config.time);
-  Serial.print("Interval: ");
-  Serial.println(config.interval.label);
+  /** Serial.println("");
+   Serial.print("Strips: ");
+   Serial.println(config.stripCount);
+   Serial.print("Time: ");
+   Serial.println(config.time);
+   Serial.print("Interval: ");
+   Serial.println(config.interval.label);
 
-  for (int strip = 0; strip < config.stripCount; strip++)
-  {
-    Serial.print("\tStrip ");
-    Serial.println(strip);
-    Serial.print("\tTime ");
-    Serial.println(String(getTime(config.time, strip * config.interval.interval), 1));
-    Serial.println();
-  } */
+   for (int strip = 0; strip < config.stripCount; strip++)
+   {
+     Serial.print("\tStrip ");
+     Serial.println(strip);
+     Serial.print("\tTime ");
+     Serial.println(String(getTime(config.time, strip * config.interval.interval), 1));
+     Serial.println();
+   } */
 
-  // Wait for start button press
-  while (digitalRead(START_STOP_BUTTON) == HIGH)
-  {
-    lcd.clear();
-    lcd.print("Press start");
-    delay(50);
-  }
+  lcd.clear();
 
   exposeTestStrips(config);
 }
@@ -87,7 +84,10 @@ void loop()
 
 void exposeTestStrips(TestStripConfiguration testStripConfig)
 {
+  TestStripUtil::printTestStripInfo(lcd, testStripConfig);
   Serial.println("Exposing test strips");
+
+
 
   // First, expose the entire sheet of paper for the base time
   expose(testStripConfig.time);
@@ -114,16 +114,22 @@ void exposeTestStrips(TestStripConfiguration testStripConfig)
 
 void expose(double time)
 {
-  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print(CLEAR_ROW);
+  lcd.setCursor(0, 1);
+  lcd.print(CLEAR_ROW);
+
+  lcd.setCursor(0, 0);
   lcd.print("Exposing for ");
   lcd.print(time);
   lcd.print("s");
 
+  lcd.setCursor(0, 1);
+  lcd.print("Press start");
+
   // Wait for start button press
   while (digitalRead(START_STOP_BUTTON) == HIGH)
   {
-    lcd.setCursor(0, 1);
-    lcd.print("Press start");
     delay(50);
   }
 
@@ -140,7 +146,7 @@ void expose(double time)
     currentTime = millis();
     elapsedTime = currentTime - startTime;
 
-    if(currentTime - lastLCDUpdate >= 10)
+    if (currentTime - lastLCDUpdate >= 10)
     {
       lcd.setCursor(0, 1);
       lcd.print("Remaining: ");
@@ -163,7 +169,7 @@ void expose(double time)
   }
 
   digitalWrite(RELAY_PIN, LOW);
-  lcd.clear();
-  lcd.print("Done");
-  delay(500);
+  lcd.setCursor(0, 1);
+  lcd.print("Exposure complete");
+  delay(1500);
 }
