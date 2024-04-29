@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 #include <EEPROM.h>
+#include <arduino-timer.h>
 
 #include "IncrementorInteraction/IncrementorInteraction.h"
 #include "Interval/Interval.h"
@@ -19,10 +20,17 @@ const int UP_BUTTON = 7;
 const int DOWN_BUTTON = 6;
 const int ENTER_BUTTON = 5;
 const int BACK_BUTTON = 4;
+const int START_STOP_BUTTON = A0;
 
-ButtonConfiguration buttonConfiguration = {UP_BUTTON, DOWN_BUTTON, ENTER_BUTTON, BACK_BUTTON};
+const int BUZZER_PIN = 3;
+const int RELAY_PIN = 2;
+
+ButtonConfiguration buttonConfiguration = {UP_BUTTON, DOWN_BUTTON, ENTER_BUTTON, BACK_BUTTON, START_STOP_BUTTON};
 
 TestStripMenu testStripMenu(lcd, buttonConfiguration);
+
+void exposeTestStrips(TestStripConfiguration testStripConfig);
+void expose(double time);
 
 void setup()
 {
@@ -34,11 +42,18 @@ void setup()
   pinMode(DOWN_BUTTON, INPUT_PULLUP);
   pinMode(ENTER_BUTTON, INPUT_PULLUP);
   pinMode(BACK_BUTTON, INPUT_PULLUP);
+  pinMode(START_STOP_BUTTON, INPUT_PULLUP);
+
+  pinMode(BUZZER_PIN, OUTPUT);
+  digitalWrite(BUZZER_PIN, LOW);
+
+  pinMode(RELAY_PIN, OUTPUT);
+  digitalWrite(RELAY_PIN, LOW);
 
   auto config = testStripMenu.run();
 
   // todo: remove debug serial print later
-  Serial.println("");
+ /** Serial.println("");
   Serial.print("Strips: ");
   Serial.println(config.stripCount);
   Serial.print("Time: ");
@@ -53,9 +68,102 @@ void setup()
     Serial.print("\tTime ");
     Serial.println(String(getTime(config.time, strip * config.interval.interval), 1));
     Serial.println();
+  } */
+
+  // Wait for start button press
+  while (digitalRead(START_STOP_BUTTON) == HIGH)
+  {
+    lcd.clear();
+    lcd.print("Press start");
+    delay(50);
   }
+
+  exposeTestStrips(config);
 }
 
 void loop()
 {
+}
+
+void exposeTestStrips(TestStripConfiguration testStripConfig)
+{
+  Serial.println("Exposing test strips");
+
+  // First, expose the entire sheet of paper for the base time
+  expose(testStripConfig.time);
+
+  // Now, install the first sheet cover. That's the first strip.
+
+  // Then, expose each subsequent strip for that strip's time - the previous strip's time
+  for (int strip = 1; strip < testStripConfig.stripCount; strip++)
+  {
+    double thisTime = getTime(testStripConfig.time, strip * testStripConfig.interval.interval);
+    double prevTime = getTime(testStripConfig.time, (strip - 1) * testStripConfig.interval.interval);
+
+    Serial.print("Strip ");
+    Serial.print(strip + 1);
+    Serial.print(" time: ");
+    Serial.print(thisTime);
+    Serial.print(" Previous strip time: ");
+    Serial.println(prevTime);
+
+    double exposeTime = thisTime - prevTime;
+    expose(exposeTime);
+  }
+}
+
+void expose(double time)
+{
+  lcd.clear();
+  lcd.print("Exposing for ");
+  lcd.print(time);
+  lcd.print("s");
+
+  // Wait for start button press
+  while (digitalRead(START_STOP_BUTTON) == HIGH)
+  {
+    lcd.setCursor(0, 1);
+    lcd.print("Press start");
+    delay(50);
+  }
+
+  unsigned long startTime = millis();
+  unsigned long currentTime = millis();
+  unsigned long elapsedTime = 0;
+
+  unsigned long lastLCDUpdate = 0;
+
+  digitalWrite(RELAY_PIN, HIGH);
+
+  while (elapsedTime < time * 1000)
+  {
+    currentTime = millis();
+    elapsedTime = currentTime - startTime;
+
+    if(currentTime - lastLCDUpdate >= 10)
+    {
+      lcd.setCursor(0, 1);
+      lcd.print("Remaining: ");
+      lcd.print(max(0.0, (time * 1000 - elapsedTime) / 1000));
+      lcd.print("s");
+      lastLCDUpdate = currentTime;
+    }
+
+    // within 20ms of each whole second, beep
+    if (abs((elapsedTime % 1000)) < 20)
+    {
+      digitalWrite(BUZZER_PIN, HIGH);
+    }
+    else
+    {
+      digitalWrite(BUZZER_PIN, LOW);
+    }
+
+    delay(1);
+  }
+
+  digitalWrite(RELAY_PIN, LOW);
+  lcd.clear();
+  lcd.print("Done");
+  delay(500);
 }
