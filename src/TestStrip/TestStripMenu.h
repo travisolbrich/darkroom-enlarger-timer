@@ -22,10 +22,6 @@ private:
     LiquidCrystal &lcd;
     ButtonConfiguration &buttonConfiguration;
 
-    void printTestStripInfoLine(int strips);
-    void printTestStripInfoLine(int strips, double time);
-    void printTestStripInfoLine(int strips, double time, Interval interval);
-
     enum TestStripMenuStates
     {
         STRIP_COUNT,
