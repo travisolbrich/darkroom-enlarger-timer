@@ -10,7 +10,7 @@
 #include "Interval/Interval.h"
 #include "ButtonConfiguration.h"
 #include "TestStrip/TestStripMenu.h"
-#include "TestStrip/TestStripUtil.h"
+#include "TestStrip/TestStrip.h"
 
 // based on https://www.tmax100.com/photo/pdf/fstoptiming.pdf
 
@@ -30,9 +30,7 @@ const char CLEAR_ROW[] = "                    ";
 
 ButtonConfiguration buttonConfiguration = {UP_BUTTON, DOWN_BUTTON, ENTER_BUTTON, BACK_BUTTON, START_STOP_BUTTON};
 
-TestStripMenu testStripMenu(lcd, buttonConfiguration);
-
-void exposeTestStrips(TestStripConfiguration testStripConfig);
+void exposeTestStrips(TestStrip testStripConfig);
 void expose(double time);
 
 void setup()
@@ -53,9 +51,11 @@ void setup()
   pinMode(RELAY_PIN, OUTPUT);
   digitalWrite(RELAY_PIN, LOW);
 
-  testStripMenu.run();
+  TestStripMenu testStripMenu = TestStripMenu(lcd, buttonConfiguration);
 
-  if(testStripMenu.wasMenuExited())
+  TestStrip testStrip = TestStrip(8, 8, intervals[0]);
+
+  if( ! testStripMenu.run(testStrip))
   {
     lcd.clear();
     lcd.print("Menu exited");
@@ -63,9 +63,6 @@ void setup()
     lcd.print("MainMenu placeholder");
     return;
   }
-
-  TestStripConfiguration config = testStripMenu.getTestStripConfiguration();
-  
 
   // todo: remove debug serial print later
   /** Serial.println("");
@@ -87,19 +84,17 @@ void setup()
 
   lcd.clear();
 
-  exposeTestStrips(config);
+  exposeTestStrips(testStrip);
 }
 
 void loop()
 {
 }
 
-void exposeTestStrips(TestStripConfiguration testStripConfig)
+void exposeTestStrips(TestStrip testStripConfig)
 {
-  TestStripUtil::printTestStripInfo(lcd, testStripConfig);
+  testStripConfig.printTestStripInfo(lcd);
   Serial.println("Exposing test strips");
-
-
 
   // First, expose the entire sheet of paper for the base time
   expose(testStripConfig.time);

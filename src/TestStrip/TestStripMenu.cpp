@@ -1,15 +1,12 @@
 #include "TestStripMenu.h"
 #include <IncrementorInteraction/IncrementorInteraction.h>
 #include "Interval/Interval.h"
-#include "TestStrip/TestStripUtil.h"
+#include "TestStrip/TestStrip.h"
 
-TestStripMenu::TestStripMenu(LiquidCrystal &lcd, ButtonConfiguration &buttonConfiguration) : lcd(lcd), buttonConfiguration(buttonConfiguration)
-{
-}
 
-void TestStripMenu::run()
+
+bool TestStripMenu::run(TestStrip& outTestStrip)
 {
-    menuExited = false;
 
     int strips = 8;
     int timeIdx = 0;
@@ -21,8 +18,11 @@ void TestStripMenu::run()
     TimeIncrementorInteraction timeIncrementorInteraction(lcd, buttonConfiguration, timeIdx, BASE_TIME);
     IntervalIncrementorInteraction intervalIncrementorInteraction(lcd, buttonConfiguration, intervalIdx);
 
-    testStripConfiguration = {strips, testStripBaseTime, interval};
-    TestStripUtil::printTestStripInfo(lcd, testStripConfiguration);
+    outTestStrip.stripCount = 8;
+    outTestStrip.time = 8;
+    outTestStrip.interval = interval;
+
+    outTestStrip.printTestStripInfo(lcd);
 
     TestStripMenuStates state = STRIP_COUNT;
 
@@ -35,8 +35,7 @@ void TestStripMenu::run()
 
             if (strips == stripCountIncrementorInteraction.BACK_CODE)
             {
-                menuExited = true;
-                return;
+                return false;
             }
 
             state = TIME;
@@ -51,7 +50,6 @@ void TestStripMenu::run()
                 break;
             }
 
-            testStripBaseTime = getTime(BASE_TIME, timeIdx);
 
             state = INTERVAL_STEP;
             break;
@@ -65,7 +63,6 @@ void TestStripMenu::run()
                 break;
             }
 
-            interval = intervals[intervalIdx];
             state = DONE;
             break;
 
@@ -75,17 +72,12 @@ void TestStripMenu::run()
 
         lcd.clear();
 
-        testStripConfiguration = {strips, testStripBaseTime, interval};
-        TestStripUtil::printTestStripInfo(lcd, testStripConfiguration);
+        outTestStrip.stripCount = strips;
+        outTestStrip.time = getTime(BASE_TIME, timeIdx);
+        outTestStrip.interval = intervals[intervalIdx];
+
+        outTestStrip.printTestStripInfo(lcd);
     }
-}
 
-bool TestStripMenu::wasMenuExited()
-{
-    return menuExited;
-}
-
-TestStripConfiguration TestStripMenu::getTestStripConfiguration()
-{
-    return testStripConfiguration;
+    return true;
 }

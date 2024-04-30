@@ -4,28 +4,23 @@
 #include "ButtonConfiguration.h"
 #include <LiquidCrystal.h>
 
-struct TestStripConfiguration
-{
-    int stripCount;
-    double time;
-    Interval interval;
-};
+#include "TestStrip.h"
 
 class TestStripMenu
 {
 
 public:
-    TestStripMenu(LiquidCrystal &lcd, ButtonConfiguration &buttonConfiguration);
-    void run();
-    bool wasMenuExited();
-    TestStripConfiguration getTestStripConfiguration();
+    TestStripMenu(LiquidCrystal &lcd, ButtonConfiguration &button_configuration)
+        : lcd(lcd),
+          buttonConfiguration(button_configuration)
+    {
+    }
+
+    bool run(TestStrip &outTestStrip);
 
 private:
     LiquidCrystal &lcd;
     ButtonConfiguration &buttonConfiguration;
-
-    TestStripConfiguration testStripConfiguration;
-    bool menuExited = false;
 
     enum TestStripMenuStates
     {
