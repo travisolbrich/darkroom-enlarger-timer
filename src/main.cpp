@@ -53,7 +53,19 @@ void setup()
   pinMode(RELAY_PIN, OUTPUT);
   digitalWrite(RELAY_PIN, LOW);
 
-  auto config = testStripMenu.run();
+  testStripMenu.run();
+
+  if(testStripMenu.wasMenuExited())
+  {
+    lcd.clear();
+    lcd.print("Menu exited");
+    lcd.setCursor(0, 2);
+    lcd.print("MainMenu placeholder");
+    return;
+  }
+
+  TestStripConfiguration config = testStripMenu.getTestStripConfiguration();
+  
 
   // todo: remove debug serial print later
   /** Serial.println("");

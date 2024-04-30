@@ -7,8 +7,10 @@ TestStripMenu::TestStripMenu(LiquidCrystal &lcd, ButtonConfiguration &buttonConf
 {
 }
 
-TestStripConfiguration TestStripMenu::run()
+void TestStripMenu::run()
 {
+    menuExited = false;
+
     int strips = 8;
     int timeIdx = 0;
     int intervalIdx = 1;
@@ -19,8 +21,8 @@ TestStripConfiguration TestStripMenu::run()
     TimeIncrementorInteraction timeIncrementorInteraction(lcd, buttonConfiguration, timeIdx, BASE_TIME);
     IntervalIncrementorInteraction intervalIncrementorInteraction(lcd, buttonConfiguration, intervalIdx);
 
-    TestStripConfiguration config = {strips, testStripBaseTime, interval};
-    TestStripUtil::printTestStripInfo(lcd, config);
+    testStripConfiguration = {strips, testStripBaseTime, interval};
+    TestStripUtil::printTestStripInfo(lcd, testStripConfiguration);
 
     TestStripMenuStates state = STRIP_COUNT;
 
@@ -33,6 +35,8 @@ TestStripConfiguration TestStripMenu::run()
 
             if (strips == stripCountIncrementorInteraction.BACK_CODE)
             {
+                Serial.println("Back code received");
+                menuExited = true;
                 return;
             }
 
@@ -72,9 +76,17 @@ TestStripConfiguration TestStripMenu::run()
 
         lcd.clear();
 
-        config = {strips, testStripBaseTime, interval};
-        TestStripUtil::printTestStripInfo(lcd, config);
+        testStripConfiguration = {strips, testStripBaseTime, interval};
+        TestStripUtil::printTestStripInfo(lcd, testStripConfiguration);
     }
+}
 
-    return config;
+bool TestStripMenu::wasMenuExited()
+{
+    return menuExited;
+}
+
+TestStripConfiguration TestStripMenu::getTestStripConfiguration()
+{
+    return testStripConfiguration;
 }

@@ -16,11 +16,16 @@ class TestStripMenu
 
 public:
     TestStripMenu(LiquidCrystal &lcd, ButtonConfiguration &buttonConfiguration);
-    TestStripConfiguration run();
+    void run();
+    bool wasMenuExited();
+    TestStripConfiguration getTestStripConfiguration();
 
 private:
     LiquidCrystal &lcd;
     ButtonConfiguration &buttonConfiguration;
+
+    TestStripConfiguration testStripConfiguration;
+    bool menuExited = false;
 
     enum TestStripMenuStates
     {
