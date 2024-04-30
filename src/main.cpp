@@ -1,12 +1,6 @@
 #include <LiquidCrystal.h>
-#include <math.h>
-#include <limits.h>
 #include <Arduino.h>
 #include <SoftwareSerial.h>
-#include <EEPROM.h>
-#include <arduino-timer.h>
-
-#include "IncrementorInteraction/IncrementorInteraction.h"
 #include "Interval/Interval.h"
 #include "ButtonConfiguration.h"
 #include "TestStrip/TestStripMenu.h"
@@ -91,12 +85,53 @@ void loop()
 {
 }
 
+void printStripInfo(int stripNumber, int stripCount, double stripTotalTime, double exposureTime)
+{
+  lcd.setCursor(0, 0);
+  lcd.print(CLEAR_ROW);
+  lcd.setCursor(0, 1);
+  lcd.print(CLEAR_ROW);
+  lcd.setCursor(0, 2);
+  lcd.print(CLEAR_ROW);
+
+  lcd.setCursor(0, 0);
+  lcd.print("Strip ");
+  lcd.print(stripNumber);
+  lcd.print("/");
+  lcd.print(stripCount);
+  lcd.print(" (");
+  lcd.print(String(stripTotalTime, 1));
+  lcd.print("s)");
+
+  lcd.setCursor(0,1);
+  lcd.print("Expose for ");
+  lcd.print(String(exposureTime, 1));
+  lcd.print("s");
+
+  lcd.setCursor(0, 2);
+  lcd.print("Press start");
+}
+
+void wait_start()
+{
+  // Wait for start button press
+  while (digitalRead(START_STOP_BUTTON) == HIGH)
+  {
+    delay(50);
+  }
+}
+
 void exposeTestStrips(TestStrip testStripConfig)
 {
   testStripConfig.printTestStripInfo(lcd);
   Serial.println("Exposing test strips");
 
+  int baseStep = getStep(testStripConfig.time);
+  Serial.print("Base step: ");
+  Serial.println(baseStep);
   // First, expose the entire sheet of paper for the base time
+  printStripInfo(1, testStripConfig.stripCount, testStripConfig.time, testStripConfig.time);
+  wait_start();
   expose(testStripConfig.time);
 
   // Now, install the first sheet cover. That's the first strip.
@@ -104,8 +139,8 @@ void exposeTestStrips(TestStrip testStripConfig)
   // Then, expose each subsequent strip for that strip's time - the previous strip's time
   for (int strip = 1; strip < testStripConfig.stripCount; strip++)
   {
-    double thisTime = getTime(testStripConfig.time, strip * testStripConfig.interval.interval);
-    double prevTime = getTime(testStripConfig.time, (strip - 1) * testStripConfig.interval.interval);
+    double thisTime = getTime(baseStep + strip * testStripConfig.interval.interval);
+    double prevTime = getTime(baseStep + (strip - 1) * testStripConfig.interval.interval);
 
     Serial.print("Strip ");
     Serial.print(strip + 1);
@@ -115,30 +150,30 @@ void exposeTestStrips(TestStrip testStripConfig)
     Serial.println(prevTime);
 
     double exposeTime = thisTime - prevTime;
+
+    printStripInfo(strip + 1, testStripConfig.stripCount, thisTime, exposeTime);
+    wait_start();
+
     expose(exposeTime);
   }
+
+  lcd.setCursor(0, 0);
+  lcd.print(CLEAR_ROW);
+  lcd.setCursor(0, 1);
+  lcd.print(CLEAR_ROW);
+  lcd.setCursor(0, 2);
+  lcd.print(CLEAR_ROW);
+
+  lcd.setCursor(0,0);
+  lcd.print("Test strip exposure");
+  lcd.setCursor(0,1);
+  lcd.print("complete");
 }
 
 void expose(double time)
 {
-  lcd.setCursor(0, 0);
+  lcd.setCursor(0,2);
   lcd.print(CLEAR_ROW);
-  lcd.setCursor(0, 1);
-  lcd.print(CLEAR_ROW);
-
-  lcd.setCursor(0, 0);
-  lcd.print("Exposing for ");
-  lcd.print(time);
-  lcd.print("s");
-
-  lcd.setCursor(0, 1);
-  lcd.print("Press start");
-
-  // Wait for start button press
-  while (digitalRead(START_STOP_BUTTON) == HIGH)
-  {
-    delay(50);
-  }
 
   unsigned long startTime = millis();
   unsigned long currentTime = millis();
@@ -155,7 +190,7 @@ void expose(double time)
 
     if (currentTime - lastLCDUpdate >= 10)
     {
-      lcd.setCursor(0, 1);
+      lcd.setCursor(0, 2);
       lcd.print("Remaining: ");
       lcd.print(max(0.0, (time * 1000 - elapsedTime) / 1000));
       lcd.print("s");
@@ -176,7 +211,7 @@ void expose(double time)
   }
 
   digitalWrite(RELAY_PIN, LOW);
-  lcd.setCursor(0, 1);
+  lcd.setCursor(0, 2);
   lcd.print("Exposure complete");
   delay(1500);
 }
