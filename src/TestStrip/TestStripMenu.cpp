@@ -35,7 +35,6 @@ void TestStripMenu::run()
 
             if (strips == stripCountIncrementorInteraction.BACK_CODE)
             {
-                Serial.println("Back code received");
                 menuExited = true;
                 return;
             }
