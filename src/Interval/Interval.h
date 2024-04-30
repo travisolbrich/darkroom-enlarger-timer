@@ -14,4 +14,6 @@ const Interval intervals[] = {
     {12, "1", "whole"},
 };
 
-double getTime(double baseTime, int step);
+double getTime(int step);
+int getStep(double time);
+int getIntervalIndex(Interval interval);

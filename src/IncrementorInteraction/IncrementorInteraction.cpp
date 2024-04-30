@@ -103,18 +103,17 @@ String StripCountIncrementorInteraction::formatString(int value)
 }
 
 /// TimeIncrementorInteraction
-TimeIncrementorInteraction::TimeIncrementorInteraction(LiquidCrystal &lcd, ButtonConfiguration buttonConfiguration, int initialValue, double baseTime) : IncrementorInteraction(lcd, buttonConfiguration, initialValue)
+TimeIncrementorInteraction::TimeIncrementorInteraction(LiquidCrystal &lcd, ButtonConfiguration buttonConfiguration, int initialValue) : IncrementorInteraction(lcd, buttonConfiguration, initialValue)
 {
     message = "Time: ";
     suffix = "s";
-    minVal = -20;
-    maxVal = 60;
-    this->baseTime = baseTime;
+    minVal = 0; // 1 second
+    maxVal = 72; // 64 seconds
 }
 
 String TimeIncrementorInteraction::formatString(int value)
 {
-    return String(getTime(baseTime, value), 1);
+    return String(getTime(value), 1);
 }
 
 /// IntervalIncrementorInteraction

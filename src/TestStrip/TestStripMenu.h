@@ -29,6 +29,4 @@ private:
         INTERVAL_STEP,
         DONE
     };
-
-    static constexpr double BASE_TIME = 8.0;
 };

@@ -7,6 +7,7 @@
 class IncrementorInteraction
 {
 
+// todo: make generic incrementor interaction class with virtual increment/decrement to support strip, time, and interval
 public:
     IncrementorInteraction(LiquidCrystal &lcd, ButtonConfiguration buttonConfiguration, int initialValue);
     int handleInteraction();
@@ -40,11 +41,8 @@ public:
 class TimeIncrementorInteraction : public IncrementorInteraction
 {
 public:
-    TimeIncrementorInteraction(LiquidCrystal &lcd, ButtonConfiguration buttonConfiguration, int initialValue, double baseTime);
+    TimeIncrementorInteraction(LiquidCrystal &lcd, ButtonConfiguration buttonConfiguration, int initialValue);
     String formatString(int value) override;
-
-private:
-    double baseTime;
 };
 
 class IntervalIncrementorInteraction : public IncrementorInteraction
