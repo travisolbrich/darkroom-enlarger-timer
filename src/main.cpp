@@ -47,7 +47,7 @@ void setup()
 
   TestStripMenu testStripMenu = TestStripMenu(lcd, buttonConfiguration);
 
-  TestStrip testStrip = TestStrip(8, 8, intervals[0]);
+  TestStrip testStrip = TestStrip();
 
   if( ! testStripMenu.run(testStrip))
   {

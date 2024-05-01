@@ -1,6 +1,7 @@
 #include "TestStrip.h"
 
 
+TestStrip::TestStrip() = default;
 
 void TestStrip::printTestStripInfo(LiquidCrystal &lcd) const
 {
