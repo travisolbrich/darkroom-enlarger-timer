@@ -49,7 +49,7 @@ void setup()
 
   TestStrip testStrip = TestStrip();
 
-  if( ! testStripMenu.run(testStrip))
+  if (!testStripMenu.run(testStrip))
   {
     lcd.clear();
     lcd.print("Menu exited");
@@ -103,7 +103,7 @@ void printStripInfo(int stripNumber, int stripCount, double stripTotalTime, doub
   lcd.print(String(stripTotalTime, 1));
   lcd.print("s)");
 
-  lcd.setCursor(0,1);
+  lcd.setCursor(0, 1);
   lcd.print("Expose for ");
   lcd.print(String(exposureTime, 1));
   lcd.print("s");
@@ -164,15 +164,15 @@ void exposeTestStrips(TestStrip testStripConfig)
   lcd.setCursor(0, 2);
   lcd.print(CLEAR_ROW);
 
-  lcd.setCursor(0,0);
+  lcd.setCursor(0, 0);
   lcd.print("Test strip exposure");
-  lcd.setCursor(0,1);
+  lcd.setCursor(0, 1);
   lcd.print("complete");
 }
 
 void expose(double time)
 {
-  lcd.setCursor(0,2);
+  lcd.setCursor(0, 2);
   lcd.print(CLEAR_ROW);
 
   unsigned long startTime = millis();

@@ -3,7 +3,7 @@
 
 TestStrip::TestStrip() = default;
 
-void TestStrip::printTestStripInfo(LiquidCrystal &lcd) const
+void TestStrip::printTestStripInfo(LiquidCrystal& lcd) const
 {
     lcd.setCursor(0, 3);
     lcd.print("                    ");

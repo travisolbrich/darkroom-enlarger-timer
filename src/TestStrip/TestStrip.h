@@ -19,5 +19,5 @@ public:
 	{
 	}
 
-	void printTestStripInfo(LiquidCrystal &lcd) const;
+	void printTestStripInfo(LiquidCrystal& lcd) const;
 };
