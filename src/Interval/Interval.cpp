@@ -2,15 +2,9 @@
 
 #include "math.h"
 
-// todo: perhaps "stop" makes more sense than "step"?
-/* todo: probably no need to do this time to step conversion?
-   simplify math by computing arbitrary time + increment as time * pow(2, increment / 12)
-*/
-double getTime(int step)
+double getTime(int numTwelthStops)
 {
-    double time = pow(2, (step / 12.0));
-
-    return time;
+    return pow(2, (numTwelthStops / 12.0));
 }
 
 int getStep(double time)
@@ -24,7 +18,7 @@ int getIntervalIndex(const Interval interval)
 {
     for (int i = 0; i < sizeof(intervals) / sizeof(Interval); i++)
     {
-        if (intervals[i].interval == interval.interval)
+        if (intervals[i].divisor == interval.divisor)
         {
             return i;
         }

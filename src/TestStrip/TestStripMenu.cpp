@@ -1,19 +1,13 @@
 #include "TestStripMenu.h"
 #include <IncrementorInteraction/IncrementorInteraction.h>
-#include "Interval/Interval.h"
 #include "TestStrip/TestStrip.h"
-
 
 
 bool TestStripMenu::run(TestStrip& outTestStrip)
 {
-    int stripCount = outTestStrip.stripCount;
-    int timeIdx = getStep(outTestStrip.time);
-    int intervalIdx = getIntervalIndex(outTestStrip.interval);
-
-    StripCountIncrementorInteraction stripCountIncrementorInteraction(lcd, buttonConfiguration, outTestStrip.stripCount);
-    TimeIncrementorInteraction timeIncrementorInteraction(lcd, buttonConfiguration, timeIdx);
-    IntervalIncrementorInteraction intervalIncrementorInteraction(lcd, buttonConfiguration, intervalIdx);
+    StripCountIncrementorInteraction stripCountIncrementorInteraction(lcd, buttonConfiguration);
+    TimeIncrementorInteraction timeIncrementorInteraction(lcd, buttonConfiguration);
+    IntervalIncrementorInteraction intervalIncrementorInteraction(lcd, buttonConfiguration);
 
     outTestStrip.printTestStripInfo(lcd);
 
@@ -25,44 +19,35 @@ bool TestStripMenu::run(TestStrip& outTestStrip)
         {
         case STRIP_COUNT:
             Serial.println("STRIP_COUNT");
-            stripCount = stripCountIncrementorInteraction.handleInteraction();
-            Serial.println(stripCount);
-            if (stripCount == stripCountIncrementorInteraction.BACK_CODE)
+
+            if (! stripCountIncrementorInteraction.handleInteraction(outTestStrip.stripCount))
             {
                 return false;
             }
-
-            outTestStrip.stripCount = stripCount;
 
             state = TIME;
             break;
 
         case TIME:
             Serial.println("TIME");
-            timeIdx = timeIncrementorInteraction.handleInteraction();
 
-            if (timeIdx == timeIncrementorInteraction.BACK_CODE)
+            if (! timeIncrementorInteraction.handleInteraction(outTestStrip.time))
             {
                 state = STRIP_COUNT;
                 break;
             }
-
-            outTestStrip.time = getTime(timeIdx);
 
             state = INTERVAL_STEP;
             break;
 
         case INTERVAL_STEP:
             Serial.println("INTERVAL_STEP");
-            intervalIdx = intervalIncrementorInteraction.handleInteraction();
 
-            if (intervalIdx == intervalIncrementorInteraction.BACK_CODE)
+            if (! intervalIncrementorInteraction.handleInteraction(outTestStrip.interval))
             {
                 state = TIME;
                 break;
             }
-
-            outTestStrip.interval = intervals[intervalIdx];
 
             state = DONE;
             break;

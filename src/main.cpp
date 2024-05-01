@@ -139,8 +139,8 @@ void exposeTestStrips(TestStrip testStripConfig)
   // Then, expose each subsequent strip for that strip's time - the previous strip's time
   for (int strip = 1; strip < testStripConfig.stripCount; strip++)
   {
-    double thisTime = getTime(baseStep + strip * testStripConfig.interval.interval);
-    double prevTime = getTime(baseStep + (strip - 1) * testStripConfig.interval.interval);
+    double thisTime = getTime(baseStep + strip * testStripConfig.interval.divisor);
+    double prevTime = getTime(baseStep + (strip - 1) * testStripConfig.interval.divisor);
 
     Serial.print("Strip ");
     Serial.print(strip + 1);

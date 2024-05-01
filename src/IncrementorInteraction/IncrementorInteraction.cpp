@@ -2,99 +2,16 @@
 #include <LiquidCrystal.h>
 #include "Interval/Interval.h"
 #include "ButtonConfiguration.h"
+#include "math.h"
 
-IncrementorInteraction::IncrementorInteraction(LiquidCrystal &lcd, ButtonConfiguration buttonConfiguration, int initialValue)
-    : lcd(lcd), buttonConfiguration(buttonConfiguration), selection(initialValue)
-{
-}
 
-String IncrementorInteraction::formatString(int value)
-{
-    return String(value);
-}
+// StripCountIncrementorInteraction
 
-int IncrementorInteraction::handleInteraction()
-{
-    lcd.setCursor(0, 0);
-    lcd.print(message);
-
-    bool exit = false;
-
-    while (!exit)
-    {
-        lcd.setCursor(0, 2);
-        lcd.print(formatString(selection));
-        lcd.print(suffix);
-        lcd.print("        ");
-
-        while (noButtonsPressed())
-        {
-            delay(10);
-        }
-
-        selection = handleIncrementButtonPress(buttonConfiguration.upButton, 1, selection);
-        selection = handleIncrementButtonPress(buttonConfiguration.downButton, -1, selection);
-
-        selection = max(minVal, min(maxVal, selection));
-
-        exit = checkExitCondition();
-        if (checkBackCondition())
-        {
-            return BACK_CODE;
-        }
-    }
-
-    return selection;
-}
-
-int IncrementorInteraction::handleIncrementButtonPress(int button, int increment, int value)
-{
-    if (digitalRead(button) == LOW)
-    {
-        value += increment;
-        delay(200);
-    }
-
-    return value;
-}
-
-bool IncrementorInteraction::checkBackCondition()
-{
-    if (digitalRead(buttonConfiguration.leftButton) == LOW)
-    {
-        delay(200);
-        return true;
-    }
-
-    return false;
-}
-
-bool IncrementorInteraction::noButtonsPressed()
-{
-    return digitalRead(buttonConfiguration.upButton) == HIGH &&
-           digitalRead(buttonConfiguration.downButton) == HIGH &&
-           digitalRead(buttonConfiguration.leftButton) == HIGH &&
-           digitalRead(buttonConfiguration.rightButton) == HIGH;
-}
-
-bool IncrementorInteraction::checkExitCondition()
-{
-    if (digitalRead(buttonConfiguration.rightButton) == LOW)
-    {
-        delay(200);
-        return true;
-    }
-
-    return false;
-}
-
-/// StripCountIncrementorInteraction
-StripCountIncrementorInteraction::StripCountIncrementorInteraction(LiquidCrystal &lcd, ButtonConfiguration buttonConfiguration, int initialValue) : IncrementorInteraction(lcd, buttonConfiguration, initialValue)
+StripCountIncrementorInteraction::StripCountIncrementorInteraction(LiquidCrystal& lcd,
+    const ButtonConfiguration& buttonConfiguration): IncrementorInteraction<int>(lcd, buttonConfiguration)
 {
     message = "Strips: ";
     suffix = "";
-    minVal = 1;
-    maxVal = 10;
 }
 
 String StripCountIncrementorInteraction::formatString(int value)
@@ -102,34 +19,92 @@ String StripCountIncrementorInteraction::formatString(int value)
     return String(value);
 }
 
-/// TimeIncrementorInteraction
-TimeIncrementorInteraction::TimeIncrementorInteraction(LiquidCrystal &lcd, ButtonConfiguration buttonConfiguration, int initialValue) : IncrementorInteraction(lcd, buttonConfiguration, initialValue)
+int StripCountIncrementorInteraction::increment(int value)
+{
+    if (value < 10)
+    {
+        return value + 1;
+    }
+
+    return value ;
+}
+
+int StripCountIncrementorInteraction::decrement(int value)
+{
+    if (value > 1)
+    {
+        return value - 1;
+    }
+
+    return value;
+}
+
+// TimeIncrementorInteraction
+TimeIncrementorInteraction::TimeIncrementorInteraction(LiquidCrystal& lcd,
+    const ButtonConfiguration& buttonConfiguration): IncrementorInteraction<double>(lcd, buttonConfiguration)
 {
     message = "Time: ";
     suffix = "s";
-    minVal = 0; // 1 second
-    maxVal = 72; // 64 seconds
 }
 
-String TimeIncrementorInteraction::formatString(int value)
+String TimeIncrementorInteraction::formatString(double value)
 {
-    return String(getTime(value), 1);
+    return String(value, 1);
 }
 
-/// IntervalIncrementorInteraction
-IntervalIncrementorInteraction::IntervalIncrementorInteraction(LiquidCrystal &lcd, ButtonConfiguration buttonConfiguration, int initalValue) : IncrementorInteraction(lcd, buttonConfiguration, initalValue)
+double TimeIncrementorInteraction::increment(double value)
+{
+    // todo: should we set upper bound?
+    return value * getTime(1);
+}
+
+double TimeIncrementorInteraction::decrement(double value)
+{
+    if (value > 1)
+    {
+        return value * getTime(-1);
+    }
+    return value;
+}
+
+// IntervalIncrementorInteraction
+
+IntervalIncrementorInteraction::IntervalIncrementorInteraction(LiquidCrystal& lcd,
+    const ButtonConfiguration& buttonConfiguration): IncrementorInteraction<Interval>(lcd, buttonConfiguration)
 {
     message = "Interval: ";
     suffix = " steps";
-    minVal = 0;
-    maxVal = 3;
 }
 
-String IntervalIncrementorInteraction::formatString(int value)
+String IntervalIncrementorInteraction::formatString(Interval value)
 {
-    auto result = String(intervals[value].label);
+    auto result = String(value.label);
     result.concat(": ");
-    result.concat(intervals[value].fullLabel);
+    result.concat(value.fullLabel);
 
     return result;
+}
+
+Interval IntervalIncrementorInteraction::increment(Interval value)
+{
+    int i = getIntervalIndex(value);
+
+    if (i < 3)
+    {
+        return intervals[i + 1];
+    }
+
+    return value;
+}
+
+Interval IntervalIncrementorInteraction::decrement(Interval value)
+{
+    int i = getIntervalIndex(value);
+
+    if (i > 0)
+    {
+        return intervals[i - 1];
+    }
+
+    return value;
 }
