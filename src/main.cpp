@@ -27,39 +27,39 @@ ButtonConfiguration buttonConfiguration = {UP_BUTTON, DOWN_BUTTON, ENTER_BUTTON,
 
 void setup()
 {
-  Serial.begin(9600);
+    Serial.begin(9600);
 
-  lcd.begin(20, 4);
+    lcd.begin(20, 4);
 
-  pinMode(UP_BUTTON, INPUT_PULLUP);
-  pinMode(DOWN_BUTTON, INPUT_PULLUP);
-  pinMode(ENTER_BUTTON, INPUT_PULLUP);
-  pinMode(BACK_BUTTON, INPUT_PULLUP);
-  pinMode(START_STOP_BUTTON, INPUT_PULLUP);
+    pinMode(UP_BUTTON, INPUT_PULLUP);
+    pinMode(DOWN_BUTTON, INPUT_PULLUP);
+    pinMode(ENTER_BUTTON, INPUT_PULLUP);
+    pinMode(BACK_BUTTON, INPUT_PULLUP);
+    pinMode(START_STOP_BUTTON, INPUT_PULLUP);
 
-  pinMode(BUZZER_PIN, OUTPUT);
-  digitalWrite(BUZZER_PIN, LOW);
+    pinMode(BUZZER_PIN, OUTPUT);
+    digitalWrite(BUZZER_PIN, LOW);
 
-  pinMode(RELAY_PIN, OUTPUT);
-  digitalWrite(RELAY_PIN, LOW);
+    pinMode(RELAY_PIN, OUTPUT);
+    digitalWrite(RELAY_PIN, LOW);
 
-  TestStripMenu testStripMenu = TestStripMenu(lcd, buttonConfiguration);
-  TestStripExposer testStripExposer = TestStripExposer(lcd, buttonConfiguration);
+    TestStripMenu testStripMenu = TestStripMenu(lcd, buttonConfiguration);
+    TestStripExposer testStripExposer = TestStripExposer(lcd, buttonConfiguration);
 
-  TestStrip testStrip = TestStrip();
+    TestStrip testStrip = TestStrip();
 
-  if (!testStripMenu.run(testStrip))
-  {
+    if (!testStripMenu.run(testStrip))
+    {
+        lcd.clear();
+        lcd.print("Menu exited");
+        lcd.setCursor(0, 2);
+        lcd.print("MainMenu placeholder");
+        return;
+    }
+
     lcd.clear();
-    lcd.print("Menu exited");
-    lcd.setCursor(0, 2);
-    lcd.print("MainMenu placeholder");
-    return;
-  }
 
-  lcd.clear();
-
-  testStripExposer.exposeTestStrips(testStrip);
+    testStripExposer.exposeTestStrips(testStrip);
 }
 
 void loop()
