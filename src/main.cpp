@@ -104,7 +104,7 @@ void printStripInfo(int stripNumber, int stripCount, double stripTotalTime, doub
   lcd.print("s)");
 
   lcd.setCursor(0, 1);
-  lcd.print("Expose for ");
+  lcd.print("Exp. Time: ");
   lcd.print(String(exposureTime, 1));
   lcd.print("s");
 
@@ -129,7 +129,9 @@ void exposeTestStrips(TestStrip testStripConfig)
   int baseStep = getStep(testStripConfig.time);
   Serial.print("Base step: ");
   Serial.println(baseStep);
+
   // First, expose the entire sheet of paper for the base time
+
   printStripInfo(1, testStripConfig.stripCount, testStripConfig.time, testStripConfig.time);
   wait_start();
   expose(testStripConfig.time);
