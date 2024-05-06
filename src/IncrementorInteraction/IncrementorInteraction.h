@@ -46,6 +46,7 @@ public:
             }
             else if (isButtonPressed(buttonConfiguration.leftButton))
             {
+                delay(200);
                 return false;
             }
             else if (isButtonPressed(buttonConfiguration.rightButton))
