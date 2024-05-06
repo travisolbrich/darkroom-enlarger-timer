@@ -7,12 +7,6 @@ double getTime(int numTwelthStops)
     return pow(2, (numTwelthStops / 12.0));
 }
 
-int getStep(double time)
-{
-    double step = log(time) / log(2.0) * 12;
-    return round(step);
-}
-
 // given interval, return index in intervals[]
 int getIntervalIndex(const Interval interval)
 {

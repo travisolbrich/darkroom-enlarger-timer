@@ -11,7 +11,7 @@ const int RELAY_PIN = 2;
 
 bool TestStripExposer::exposeTestStrips(TestStrip& testStripConfig)
 {
-    int baseStep = getStep(testStripConfig.time);
+    double baseTime = testStripConfig.time;
 
     testStripConfig.printTestStripFooter(lcd);
 
@@ -26,8 +26,8 @@ bool TestStripExposer::exposeTestStrips(TestStrip& testStripConfig)
     // Then, expose each subsequent strip for that strip's time - the previous strip's time
     for (int strip = 1; strip < testStripConfig.stripCount; strip++)
     {
-        double thisTime = getTime(baseStep + strip * testStripConfig.interval.divisor);
-        double prevTime = getTime(baseStep + (strip - 1) * testStripConfig.interval.divisor);
+        double thisTime = baseTime * getTime(strip * testStripConfig.interval.divisor);
+        double prevTime = baseTime * getTime((strip - 1) * testStripConfig.interval.divisor);
 
         double exposeTime = thisTime - prevTime;
 
@@ -112,6 +112,9 @@ void TestStripExposer::expose(double time)
 
     // todo extract to a RelayController class?
     digitalWrite(RELAY_PIN, HIGH);
+
+    // todo REMOVE
+    time = min(2, time);
 
     while (elapsedTime < time * 1000)
     {
