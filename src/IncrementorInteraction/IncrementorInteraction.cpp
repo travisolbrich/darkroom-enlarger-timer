@@ -2,8 +2,6 @@
 #include <LiquidCrystal.h>
 #include "Interval/Interval.h"
 #include "ButtonConfiguration.h"
-#include "math.h"
-
 
 // StripCountIncrementorInteraction
 
