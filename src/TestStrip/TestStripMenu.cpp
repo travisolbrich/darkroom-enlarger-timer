@@ -9,7 +9,7 @@ bool TestStripMenu::run(TestStrip& outTestStrip)
     TimeIncrementorInteraction timeIncrementorInteraction(lcd, buttonConfiguration);
     IntervalIncrementorInteraction intervalIncrementorInteraction(lcd, buttonConfiguration);
 
-    outTestStrip.printTestStripInfo(lcd);
+    outTestStrip.printTestStripFooter(lcd);
 
     TestStripMenuStates state = STRIP_COUNT;
 
@@ -59,7 +59,7 @@ bool TestStripMenu::run(TestStrip& outTestStrip)
 
         lcd.clear();
 
-        outTestStrip.printTestStripInfo(lcd);
+        outTestStrip.printTestStripFooter(lcd);
     }
 
     return true;
