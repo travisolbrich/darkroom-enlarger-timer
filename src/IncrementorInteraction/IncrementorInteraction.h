@@ -5,6 +5,7 @@
 #include <Interval/Interval.h>
 
 #include "ButtonConfiguration.h"
+#include "InteractionResult.h"
 
 template <typename T>
 class IncrementorInteraction
@@ -15,14 +16,12 @@ public:
     {
     };
 
-    bool handleInteraction(T& value)
+    InteractionResult handleInteraction(T& value)
     {
         lcd.setCursor(0, 0);
         lcd.print(message);
 
-        bool exit = false;
-
-        while (!exit)
+        while (true)
         {
             lcd.setCursor(0, 2);
             lcd.print(formatString(value));
@@ -41,23 +40,36 @@ public:
             }
             else if (isButtonPressed(buttonConfiguration.downButton))
             {
+                Serial.println("Down button pressed. (" + String(buttonConfiguration.downButton));
                 value = decrement(value);
                 delay(200);
             }
             else if (isButtonPressed(buttonConfiguration.leftButton))
             {
+                Serial.println("Left button pressed.");
                 delay(200);
-                return false;
+                return InteractionResult::Back;
+            }
+            else if (isButtonPressed(buttonConfiguration.exitButton))
+            {
+                Serial.println("Exit button pressed.");
+                delay(200);
+                return InteractionResult::MainMenu;
             }
             else if (isButtonPressed(buttonConfiguration.rightButton))
             {
-                exit = true;
+                Serial.println("Right button pressed.");
                 delay(200);
+                return InteractionResult::Continue;
+            }
+            else if (isButtonPressed(buttonConfiguration.startStopButton))
+            {
+                Serial.println("Start/Stop button pressed.");
+                delay(200);
+                return InteractionResult::Done;
             }
         }
-
-        return true;
-    };
+    }
 
 protected:
     String message;
@@ -78,10 +90,15 @@ private:
 
     bool noButtonsPressed()
     {
+        // Iterate over buttonConfiguration and check if any button is pressed
+
+
         return digitalRead(buttonConfiguration.upButton) == HIGH &&
             digitalRead(buttonConfiguration.downButton) == HIGH &&
             digitalRead(buttonConfiguration.leftButton) == HIGH &&
-            digitalRead(buttonConfiguration.rightButton) == HIGH;
+            digitalRead(buttonConfiguration.rightButton) == HIGH &&
+            digitalRead(buttonConfiguration.exitButton) == HIGH &&
+            digitalRead(buttonConfiguration.startStopButton) == HIGH;
     };
 };
 

@@ -12,6 +12,7 @@ bool TestStripMenu::run(TestStrip& outTestStrip)
     outTestStrip.printTestStripFooter(lcd);
 
     TestStripMenuStates state = STRIP_COUNT;
+    InteractionResult interactionResult = InteractionResult::Continue;
 
     while (state != DONE)
     {
@@ -20,9 +21,16 @@ bool TestStripMenu::run(TestStrip& outTestStrip)
         case STRIP_COUNT:
             Serial.println("STRIP_COUNT");
 
-            if (!stripCountIncrementorInteraction.handleInteraction(outTestStrip.stripCount))
+            interactionResult = stripCountIncrementorInteraction.handleInteraction(outTestStrip.stripCount);
+
+            if (interactionResult == InteractionResult::Back || interactionResult == InteractionResult::MainMenu)
             {
                 return false;
+            }
+            if (interactionResult == InteractionResult::Done)
+            {
+                state = DONE;
+                break;
             }
 
             state = TIME;
@@ -31,9 +39,22 @@ bool TestStripMenu::run(TestStrip& outTestStrip)
         case TIME:
             Serial.println("TIME");
 
-            if (!timeIncrementorInteraction.handleInteraction(outTestStrip.time))
+            interactionResult = timeIncrementorInteraction.handleInteraction(outTestStrip.time);
+
+            if (interactionResult == InteractionResult::Back)
             {
                 state = STRIP_COUNT;
+                break;
+            }
+
+            if (interactionResult == InteractionResult::MainMenu)
+            {
+                return false;
+            }
+
+            if (interactionResult == InteractionResult::Done)
+            {
+                state = DONE;
                 break;
             }
 
@@ -43,9 +64,22 @@ bool TestStripMenu::run(TestStrip& outTestStrip)
         case INTERVAL_STEP:
             Serial.println("INTERVAL_STEP");
 
-            if (!intervalIncrementorInteraction.handleInteraction(outTestStrip.interval))
+            interactionResult = intervalIncrementorInteraction.handleInteraction(outTestStrip.interval);
+
+            if (interactionResult == InteractionResult::Back)
             {
                 state = TIME;
+                break;
+            }
+
+            if (interactionResult == InteractionResult::MainMenu)
+            {
+                return false;
+            }
+
+            if (interactionResult == InteractionResult::Done)
+            {
+                state = DONE;
                 break;
             }
 

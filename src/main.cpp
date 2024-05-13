@@ -13,16 +13,17 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 const int UP_BUTTON = 7;
 const int DOWN_BUTTON = 6;
-const int ENTER_BUTTON = 5;
-const int BACK_BUTTON = 4;
-const int START_STOP_BUTTON = A0;
+const int RIGHT_BUTTON = 5;
+const int LEFT_BUTTON = 4;
+const int START_STOP_BUTTON = PIN_A0;
+const int EXIT_BUTTON = PIN_A1;
 
 const int BUZZER_PIN = 3;
 const int RELAY_PIN = 2;
 
 const char CLEAR_ROW[] = "                    ";
 
-ButtonConfiguration buttonConfiguration = {UP_BUTTON, DOWN_BUTTON, ENTER_BUTTON, BACK_BUTTON, START_STOP_BUTTON};
+ButtonConfiguration buttonConfiguration = {UP_BUTTON, DOWN_BUTTON, RIGHT_BUTTON, LEFT_BUTTON, START_STOP_BUTTON, EXIT_BUTTON};
 
 
 void setup()
@@ -33,9 +34,10 @@ void setup()
 
     pinMode(UP_BUTTON, INPUT_PULLUP);
     pinMode(DOWN_BUTTON, INPUT_PULLUP);
-    pinMode(ENTER_BUTTON, INPUT_PULLUP);
-    pinMode(BACK_BUTTON, INPUT_PULLUP);
+    pinMode(RIGHT_BUTTON, INPUT_PULLUP);
+    pinMode(LEFT_BUTTON, INPUT_PULLUP);
     pinMode(START_STOP_BUTTON, INPUT_PULLUP);
+    pinMode(EXIT_BUTTON, INPUT_PULLUP);
 
     pinMode(BUZZER_PIN, OUTPUT);
     digitalWrite(BUZZER_PIN, LOW);

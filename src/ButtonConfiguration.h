@@ -7,4 +7,5 @@ struct ButtonConfiguration
     int rightButton;
     int leftButton;
     int startStopButton;
+    int exitButton;
 };

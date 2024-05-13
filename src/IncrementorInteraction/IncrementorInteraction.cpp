@@ -5,8 +5,8 @@
 
 // StripCountIncrementorInteraction
 
-StripCountIncrementorInteraction::StripCountIncrementorInteraction(LiquidCrystal& lcd,
-                                                                   const ButtonConfiguration& buttonConfiguration):
+StripCountIncrementorInteraction::StripCountIncrementorInteraction(LiquidCrystal &lcd,
+                                                                   const ButtonConfiguration &buttonConfiguration):
     IncrementorInteraction<int>(lcd, buttonConfiguration)
 {
     message = "Strips: ";
@@ -39,8 +39,8 @@ int StripCountIncrementorInteraction::decrement(int value)
 }
 
 // TimeIncrementorInteraction
-TimeIncrementorInteraction::TimeIncrementorInteraction(LiquidCrystal& lcd,
-                                                       const ButtonConfiguration& buttonConfiguration):
+TimeIncrementorInteraction::TimeIncrementorInteraction(LiquidCrystal &lcd,
+                                                       const ButtonConfiguration &buttonConfiguration):
     IncrementorInteraction<double>(lcd, buttonConfiguration)
 {
     message = "Time: ";
@@ -69,8 +69,8 @@ double TimeIncrementorInteraction::decrement(double value)
 
 // IntervalIncrementorInteraction
 
-IntervalIncrementorInteraction::IntervalIncrementorInteraction(LiquidCrystal& lcd,
-                                                               const ButtonConfiguration& buttonConfiguration):
+IntervalIncrementorInteraction::IntervalIncrementorInteraction(LiquidCrystal &lcd,
+                                                               const ButtonConfiguration &buttonConfiguration):
     IncrementorInteraction<Interval>(lcd, buttonConfiguration)
 {
     message = "Interval: ";

@@ -114,7 +114,7 @@ void TestStripExposer::expose(double time)
     digitalWrite(RELAY_PIN, HIGH);
 
     // todo REMOVE
-    time = min(2, time);
+    // time = min(2, time);
 
     while (elapsedTime < time * 1000)
     {
@@ -136,6 +136,7 @@ void TestStripExposer::expose(double time)
     }
 
     digitalWrite(RELAY_PIN, LOW);
+    digitalWrite(BUZZER_PIN, LOW);
     lcd.setCursor(0, 2);
     lcd.print("Exposure complete");
     delay(1500);
