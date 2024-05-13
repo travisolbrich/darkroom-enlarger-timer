@@ -7,105 +7,97 @@
 
 StripCountIncrementorInteraction::StripCountIncrementorInteraction(LiquidCrystal &lcd,
                                                                    const ButtonConfiguration &buttonConfiguration):
-    IncrementorInteraction<int>(lcd, buttonConfiguration)
+    IncrementorInteraction(lcd, buttonConfiguration)
 {
     message = "Strips: ";
     suffix = "";
 }
 
-String StripCountIncrementorInteraction::formatString(int value)
+
+String StripCountIncrementorInteraction::formatString(TestStrip& testStrip)
 {
-    return String(value);
+    return String(testStrip.stripCount);
 }
 
-int StripCountIncrementorInteraction::increment(int value)
+void StripCountIncrementorInteraction::increment(TestStrip& testStrip)
 {
-    if (value < 10)
+    if (testStrip.stripCount < 10)
     {
-        return value + 1;
+        testStrip.stripCount++;
     }
-
-    return value;
 }
 
-int StripCountIncrementorInteraction::decrement(int value)
+void StripCountIncrementorInteraction::decrement(TestStrip& testStrip)
 {
-    if (value > 1)
+    if (testStrip.stripCount > 1)
     {
-        return value - 1;
+        testStrip.stripCount--;
     }
-
-    return value;
 }
 
 // TimeIncrementorInteraction
 TimeIncrementorInteraction::TimeIncrementorInteraction(LiquidCrystal &lcd,
                                                        const ButtonConfiguration &buttonConfiguration):
-    IncrementorInteraction<double>(lcd, buttonConfiguration)
+    IncrementorInteraction(lcd, buttonConfiguration)
 {
     message = "Time: ";
     suffix = "s";
 }
 
-String TimeIncrementorInteraction::formatString(double value)
+String TimeIncrementorInteraction::formatString(TestStrip& testStrip)
 {
-    return String(value, 1);
+    return String(testStrip.time, 1);
 }
 
-double TimeIncrementorInteraction::increment(double value)
+void TimeIncrementorInteraction::increment(TestStrip& testStrip)
 {
     // todo: should we set upper bound?
-    return value * getTime(1);
+    testStrip.time = testStrip.time * getTime(1);
 }
 
-double TimeIncrementorInteraction::decrement(double value)
+void TimeIncrementorInteraction::decrement(TestStrip& testStrip)
 {
-    if (value > 1)
+    if (testStrip.time > 1)
     {
-        return value * getTime(-1);
+        testStrip.time = testStrip.time * getTime(-1);
     }
-    return value;
 }
 
 // IntervalIncrementorInteraction
 
 IntervalIncrementorInteraction::IntervalIncrementorInteraction(LiquidCrystal &lcd,
                                                                const ButtonConfiguration &buttonConfiguration):
-    IncrementorInteraction<Interval>(lcd, buttonConfiguration)
+    IncrementorInteraction(lcd, buttonConfiguration)
 {
     message = "Interval: ";
     suffix = " steps";
 }
 
-String IntervalIncrementorInteraction::formatString(Interval value)
+String IntervalIncrementorInteraction::formatString(TestStrip& testStrip)
 {
-    auto result = String(value.label);
+    String result = String(testStrip.interval.label);
     result.concat(": ");
-    result.concat(value.fullLabel);
+    result.concat(testStrip.interval.fullLabel);
 
     return result;
 }
 
-Interval IntervalIncrementorInteraction::increment(Interval value)
+void IntervalIncrementorInteraction::increment(TestStrip& testStrip)
 {
-    int i = getIntervalIndex(value);
+    int i = getIntervalIndex(testStrip.interval);
 
     if (i < 3)
     {
-        return intervals[i + 1];
+        testStrip.interval = intervals[i + 1];
     }
-
-    return value;
 }
 
-Interval IntervalIncrementorInteraction::decrement(Interval value)
+void IntervalIncrementorInteraction::decrement(TestStrip& testStrip)
 {
-    int i = getIntervalIndex(value);
+    int i = getIntervalIndex(testStrip.interval);
 
     if (i > 0)
     {
-        return intervals[i - 1];
+        testStrip.interval = intervals[i - 1];
     }
-
-    return value;
 }

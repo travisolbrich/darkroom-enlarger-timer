@@ -21,7 +21,7 @@ bool TestStripMenu::run(TestStrip& outTestStrip)
         case STRIP_COUNT:
             Serial.println("STRIP_COUNT");
 
-            interactionResult = stripCountIncrementorInteraction.handleInteraction(outTestStrip.stripCount);
+            interactionResult = stripCountIncrementorInteraction.handleInteraction(outTestStrip);
 
             if (interactionResult == InteractionResult::Back || interactionResult == InteractionResult::MainMenu)
             {
@@ -39,7 +39,7 @@ bool TestStripMenu::run(TestStrip& outTestStrip)
         case TIME:
             Serial.println("TIME");
 
-            interactionResult = timeIncrementorInteraction.handleInteraction(outTestStrip.time);
+            interactionResult = timeIncrementorInteraction.handleInteraction(outTestStrip);
 
             if (interactionResult == InteractionResult::Back)
             {
@@ -64,7 +64,7 @@ bool TestStripMenu::run(TestStrip& outTestStrip)
         case INTERVAL_STEP:
             Serial.println("INTERVAL_STEP");
 
-            interactionResult = intervalIncrementorInteraction.handleInteraction(outTestStrip.interval);
+            interactionResult = intervalIncrementorInteraction.handleInteraction(outTestStrip);
 
             if (interactionResult == InteractionResult::Back)
             {

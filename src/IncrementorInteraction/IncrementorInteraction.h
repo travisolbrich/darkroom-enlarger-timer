@@ -2,12 +2,11 @@
 
 #include <Arduino.h>
 #include <LiquidCrystal.h>
-#include <Interval/Interval.h>
+#include <TestStrip/TestStrip.h>
 
 #include "ButtonConfiguration.h"
 #include "InteractionResult.h"
 
-template <typename T>
 class IncrementorInteraction
 {
 public:
@@ -16,7 +15,7 @@ public:
     {
     };
 
-    InteractionResult handleInteraction(T& value)
+    InteractionResult handleInteraction(TestStrip& testStrip)
     {
         lcd.setCursor(0, 0);
         lcd.print(message);
@@ -24,7 +23,7 @@ public:
         while (true)
         {
             lcd.setCursor(0, 2);
-            lcd.print(formatString(value));
+            lcd.print(formatString(testStrip));
             lcd.print(suffix);
             lcd.print("        ");
 
@@ -35,13 +34,13 @@ public:
 
             if (isButtonPressed(buttonConfiguration.upButton))
             {
-                value = increment(value);
+                increment(testStrip);
                 delay(200);
             }
             else if (isButtonPressed(buttonConfiguration.downButton))
             {
                 Serial.println("Down button pressed. (" + String(buttonConfiguration.downButton));
-                value = decrement(value);
+                decrement(testStrip);
                 delay(200);
             }
             else if (isButtonPressed(buttonConfiguration.leftButton))
@@ -78,9 +77,9 @@ protected:
 
     ButtonConfiguration buttonConfiguration;
 
-    virtual String formatString(T value) = 0;
-    virtual T increment(T value) = 0;
-    virtual T decrement(T value) = 0;
+    virtual String formatString(TestStrip& testStrip) = 0;
+    virtual void increment(TestStrip& testStrip) = 0;
+    virtual void decrement(TestStrip& testStrip) = 0;
 
 private:
     bool isButtonPressed(int pin)
@@ -91,8 +90,6 @@ private:
     bool noButtonsPressed()
     {
         // Iterate over buttonConfiguration and check if any button is pressed
-
-
         return digitalRead(buttonConfiguration.upButton) == HIGH &&
             digitalRead(buttonConfiguration.downButton) == HIGH &&
             digitalRead(buttonConfiguration.leftButton) == HIGH &&
@@ -102,35 +99,35 @@ private:
     };
 };
 
-class StripCountIncrementorInteraction : public IncrementorInteraction<int>
+class StripCountIncrementorInteraction : public IncrementorInteraction
 {
 public:
     StripCountIncrementorInteraction(LiquidCrystal& lcd, const ButtonConfiguration& buttonConfiguration);
 
 protected:
-    String formatString(int value) override;
-    int increment(int value) override;
-    int decrement(int value) override;
+    String formatString(TestStrip& testStrip) override;
+    void increment(TestStrip& testStrip) override;
+    void decrement(TestStrip& testStrip) override;
 };
 
-class TimeIncrementorInteraction : public IncrementorInteraction<double>
+class TimeIncrementorInteraction : public IncrementorInteraction
 {
 public:
     TimeIncrementorInteraction(LiquidCrystal& lcd, const ButtonConfiguration& buttonConfiguration);
 
 protected:
-    String formatString(double value) override;
-    double increment(double value) override;
-    double decrement(double value) override;
+    String formatString(TestStrip& testStrip) override;
+    void increment(TestStrip& testStrip) override;
+    void decrement(TestStrip& testStrip) override;
 };
 
-class IntervalIncrementorInteraction : public IncrementorInteraction<Interval>
+class IntervalIncrementorInteraction : public IncrementorInteraction
 {
 public:
     IntervalIncrementorInteraction(LiquidCrystal& lcd, const ButtonConfiguration& buttonConfiguration);
 
 protected:
-    String formatString(Interval value) override;
-    Interval increment(Interval value) override;
-    Interval decrement(Interval value) override;
+    String formatString(TestStrip& testStrip) override;
+    void increment(TestStrip& testStrip) override;
+    void decrement(TestStrip& testStrip) override;
 };
