@@ -1,13 +1,31 @@
 #include "TestStripMenu.h"
-#include <IncrementorInteraction/IncrementorInteraction.h>
+
+#include <HardwareSerial.h>
+#include "IncrementorInteraction/IncrementorInteraction.h"
 #include "TestStrip/TestStrip.h"
+#include "TestStripInteractions.h"
 
-
-bool TestStripMenu::run(TestStrip& outTestStrip)
+bool TestStripMenu::run(TestStrip &outTestStrip)
 {
-    StripCountIncrementorInteraction stripCountIncrementorInteraction(lcd, buttonConfiguration);
-    TimeIncrementorInteraction timeIncrementorInteraction(lcd, buttonConfiguration);
-    IntervalIncrementorInteraction intervalIncrementorInteraction(lcd, buttonConfiguration);
+
+    IncrementorInteraction stripCountIncrementorInteraction(lcd, buttonConfiguration,
+                                                            TestStripInteractions::incrementStripCount,
+                                                            TestStripInteractions::decrementStripCount,
+                                                            TestStripInteractions::formatStripCount,
+                                                            "Strips:");
+
+    IncrementorInteraction timeIncrementorInteraction(lcd, buttonConfiguration,
+                                                      TestStripInteractions::incrementTime,
+                                                      TestStripInteractions::decrementTime,
+                                                      TestStripInteractions::formatTime,
+                                                      "Time:");
+
+    IncrementorInteraction intervalIncrementorInteraction(lcd, buttonConfiguration,
+                                                          TestStripInteractions::incrementInterval,
+                                                          TestStripInteractions::decrementInterval,
+                                                          TestStripInteractions::formatInterval,
+                                                          "Interval:");
+
 
     outTestStrip.printTestStripFooter(lcd);
 

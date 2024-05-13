@@ -8,9 +8,9 @@ struct Interval
 };
 
 const Interval intervals[] = {
-    {1 , "1/12", "twelfth"},
-    {2, "1/6", "sixth"},
-    {4, "1/3", "third"},
+    {1 , "1/12", "twelfths"},
+    {2, "1/6", "sixths"},
+    {4, "1/3", "thirds"},
     {12, "1", "whole"},
 };
 
