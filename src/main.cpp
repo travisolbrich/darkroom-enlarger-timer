@@ -50,7 +50,9 @@ void setup()
 
     TestStrip testStrip = TestStrip();
 
-    if (!testStripMenu.run(testStrip))
+    InteractionResult interactionResult = testStripMenu.run(testStrip);
+
+    if (interactionResult == InteractionResult::MainMenu)
     {
         lcd.clear();
         lcd.print("Menu exited");

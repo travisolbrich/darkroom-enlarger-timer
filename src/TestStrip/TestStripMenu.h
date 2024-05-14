@@ -1,5 +1,6 @@
 #pragma once
 
+#include <InteractionResult.h>
 #include <LiquidCrystal.h>
 
 #include "ButtonConfiguration.h"
@@ -14,7 +15,7 @@ public:
 	{
 	}
 
-	bool run(TestStrip& outTestStrip);
+	InteractionResult run(TestStrip& outTestStrip);
 
 private:
 	LiquidCrystal& lcd;

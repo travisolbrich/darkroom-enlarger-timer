@@ -31,6 +31,6 @@ protected:
 	const char* message;
 
 private:
-	static bool isButtonPressed(int pin);;
-	bool noButtonsPressed() const;;
+	static bool isButtonPressed(int pin);
+	bool noButtonsPressed() const;
 };

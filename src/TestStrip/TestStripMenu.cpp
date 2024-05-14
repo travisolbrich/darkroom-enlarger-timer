@@ -4,7 +4,7 @@
 #include "TestStrip/TestStrip.h"
 #include "TestStripInteractions.h"
 
-bool TestStripMenu::run(TestStrip &outTestStrip)
+InteractionResult TestStripMenu::run(TestStrip &outTestStrip)
 {
 
     IncrementorInteraction stripCountIncrementorInteraction(lcd, buttonConfiguration,
@@ -52,18 +52,18 @@ bool TestStripMenu::run(TestStrip &outTestStrip)
             break;
 
         case InteractionResult::MainMenu:
-            return false;
+            return InteractionResult::MainMenu;
 
         case InteractionResult::Done:
-            return true;
+            return InteractionResult::Done;
         }
     }
 
     if (interactionStage < 0)
     {
-        return false;
+        return InteractionResult::MainMenu;
     }
 
-    return true;
+    return InteractionResult::Done;
 
 }
