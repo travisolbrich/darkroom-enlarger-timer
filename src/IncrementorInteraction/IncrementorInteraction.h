@@ -32,6 +32,5 @@ protected:
 
 private:
 	static bool isButtonPressed(int pin);;
-
 	bool noButtonsPressed() const;;
 };

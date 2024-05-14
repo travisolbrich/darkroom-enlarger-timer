@@ -19,12 +19,4 @@ public:
 private:
 	LiquidCrystal& lcd;
 	ButtonConfiguration& buttonConfiguration;
-
-	enum TestStripMenuStates
-	{
-		STRIP_COUNT,
-		TIME,
-		INTERVAL_STEP,
-		DONE
-	};
 };
