@@ -1,6 +1,5 @@
 #include "TestStripMenu.h"
 
-#include <HardwareSerial.h>
 #include "IncrementorInteraction/IncrementorInteraction.h"
 #include "TestStrip/TestStrip.h"
 #include "TestStripInteractions.h"
@@ -26,93 +25,45 @@ bool TestStripMenu::run(TestStrip &outTestStrip)
                                                           TestStripInteractions::formatInterval,
                                                           "Interval:");
 
+    IncrementorInteraction* interactions[] = {
+        &stripCountIncrementorInteraction,
+        &timeIncrementorInteraction,
+        &intervalIncrementorInteraction
+    };
 
-    outTestStrip.printTestStripFooter(lcd);
+    int interactionStage = 0;
 
-    TestStripMenuStates state = STRIP_COUNT;
-    InteractionResult interactionResult = InteractionResult::Continue;
-
-    while (state != DONE)
+    while (interactionStage >= 0 && interactionStage < 3)
     {
-        switch (state)
-        {
-        case STRIP_COUNT:
-            Serial.println("STRIP_COUNT");
-
-            interactionResult = stripCountIncrementorInteraction.handleInteraction(outTestStrip);
-
-            if (interactionResult == InteractionResult::Back || interactionResult == InteractionResult::MainMenu)
-            {
-                return false;
-            }
-            if (interactionResult == InteractionResult::Done)
-            {
-                state = DONE;
-                break;
-            }
-
-            state = TIME;
-            break;
-
-        case TIME:
-            Serial.println("TIME");
-
-            interactionResult = timeIncrementorInteraction.handleInteraction(outTestStrip);
-
-            if (interactionResult == InteractionResult::Back)
-            {
-                state = STRIP_COUNT;
-                break;
-            }
-
-            if (interactionResult == InteractionResult::MainMenu)
-            {
-                return false;
-            }
-
-            if (interactionResult == InteractionResult::Done)
-            {
-                state = DONE;
-                break;
-            }
-
-            state = INTERVAL_STEP;
-            break;
-
-        case INTERVAL_STEP:
-            Serial.println("INTERVAL_STEP");
-
-            interactionResult = intervalIncrementorInteraction.handleInteraction(outTestStrip);
-
-            if (interactionResult == InteractionResult::Back)
-            {
-                state = TIME;
-                break;
-            }
-
-            if (interactionResult == InteractionResult::MainMenu)
-            {
-                return false;
-            }
-
-            if (interactionResult == InteractionResult::Done)
-            {
-                state = DONE;
-                break;
-            }
-
-            state = DONE;
-            break;
-
-        case DONE:
-            Serial.println("DONE");
-            break;
-        }
-
         lcd.clear();
 
         outTestStrip.printTestStripFooter(lcd);
+
+        InteractionResult interactionResult = interactions[interactionStage]->handleInteraction(outTestStrip);
+
+        switch (interactionResult)
+        {
+            case InteractionResult::Back:
+                interactionStage--;
+                break;
+
+            case InteractionResult::Continue:
+                interactionStage++;
+                break;
+
+            case InteractionResult::MainMenu:
+                return false;
+
+            case InteractionResult::Done:
+                return true;
+        }
+    }
+
+    if (interactionStage < 0)
+    {
+        return false;
     }
 
     return true;
+
 }
