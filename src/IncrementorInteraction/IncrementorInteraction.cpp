@@ -1,10 +1,14 @@
 #include "IncrementorInteraction.h"
-#include <LiquidCrystal.h>
-#include "ButtonConfiguration.h"
+
 #include <Arduino.h>
+#include <LiquidCrystal.h>
+
+#include "ButtonConfiguration.h"
 
 IncrementorInteraction::IncrementorInteraction(LiquidCrystal &lcd, const ButtonConfiguration &buttonConfiguration,
-    IncrementFunction increment, DecrementFunction decrement, FormatFunction formatString, const char *message): lcd(lcd),
+                                               IncrementFunction increment, DecrementFunction decrement,
+                                               FormatFunction formatString, const char *message):
+    lcd(lcd),
     buttonConfiguration(buttonConfiguration),
     increment(increment),
     decrement(decrement),
@@ -36,7 +40,7 @@ InteractionResult IncrementorInteraction::handleInteraction(TestStrip &testStrip
         }
         else if (isButtonPressed(buttonConfiguration.downButton))
         {
-            Serial.println("Down button pressed. (" + String(buttonConfiguration.downButton));
+            Serial.println("Down button pressed.");
             decrement(testStrip);
             delay(200);
         }

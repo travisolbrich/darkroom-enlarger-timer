@@ -1,6 +1,6 @@
-#include "Interval.h"
+#include <math.h>
 
-#include "math.h"
+#include "Interval.h"
 
 double getTime(int numTwelthStops)
 {

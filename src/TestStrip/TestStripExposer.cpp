@@ -1,6 +1,8 @@
+#include <Arduino.h>
+
+
 #include "TestStrip/TestStripExposer.h"
 #include "TestStrip/TestStrip.h"
-#include <Arduino.h>
 
 
 // todo don't redefine these
@@ -9,7 +11,7 @@ const int BUZZER_PIN = 3;
 const int RELAY_PIN = 2;
 
 
-bool TestStripExposer::exposeTestStrips(TestStrip& testStripConfig)
+bool TestStripExposer::exposeTestStrips(TestStrip &testStripConfig)
 {
     double baseTime = testStripConfig.time;
 
@@ -47,8 +49,8 @@ bool TestStripExposer::exposeTestStrips(TestStrip& testStripConfig)
     return true;
 }
 
- void TestStripExposer::printExposureInformation(int stripNumber, int stripCount, double stripTotalTime,
-    double exposureTime)
+void TestStripExposer::printExposureInformation(int stripNumber, int stripCount, double stripTotalTime,
+                                                double exposureTime)
 {
     lcd.setCursor(0, 0);
     lcd.print(CLEAR_ROW);
@@ -77,7 +79,7 @@ bool TestStripExposer::exposeTestStrips(TestStrip& testStripConfig)
     lcd.print("Press start");
 }
 
- void TestStripExposer::waitStart()
+void TestStripExposer::waitStart()
 {
     while (digitalRead(buttonConfig.startStopButton) == HIGH)
     {

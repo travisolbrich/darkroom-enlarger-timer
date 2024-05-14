@@ -25,7 +25,7 @@ bool TestStripMenu::run(TestStrip &outTestStrip)
                                                           TestStripInteractions::formatInterval,
                                                           "Interval:");
 
-    IncrementorInteraction* interactions[] = {
+    IncrementorInteraction *interactions[] = {
         &stripCountIncrementorInteraction,
         &timeIncrementorInteraction,
         &intervalIncrementorInteraction
@@ -43,19 +43,19 @@ bool TestStripMenu::run(TestStrip &outTestStrip)
 
         switch (interactionResult)
         {
-            case InteractionResult::Back:
-                interactionStage--;
-                break;
+        case InteractionResult::Back:
+            interactionStage--;
+            break;
 
-            case InteractionResult::Continue:
-                interactionStage++;
-                break;
+        case InteractionResult::Continue:
+            interactionStage++;
+            break;
 
-            case InteractionResult::MainMenu:
-                return false;
+        case InteractionResult::MainMenu:
+            return false;
 
-            case InteractionResult::Done:
-                return true;
+        case InteractionResult::Done:
+            return true;
         }
     }
 

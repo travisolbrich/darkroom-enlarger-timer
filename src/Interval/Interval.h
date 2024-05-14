@@ -2,16 +2,16 @@
 
 struct Interval
 {
-  double divisor;
-  const char *label;
-  const char *fullLabel;
+	double divisor;
+	const char* label;
+	const char* fullLabel;
 };
 
 const Interval intervals[] = {
-    {1 , "1/12", "twelfths"},
-    {2, "1/6", "sixths"},
-    {4, "1/3", "thirds"},
-    {12, "1", "whole"},
+	{1, "1/12", "twelfths"},
+	{2, "1/6", "sixths"},
+	{4, "1/3", "thirds"},
+	{12, "1", "whole"},
 };
 
 // ceil(12^(n/3))

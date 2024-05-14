@@ -15,4 +15,4 @@ namespace TestStripInteractions
 	void incrementInterval(TestStrip& testStrip);
 	void decrementInterval(TestStrip& testStrip);
 	String formatInterval(TestStrip& testStrip);
-} // namespace TestStripInteractions
+}

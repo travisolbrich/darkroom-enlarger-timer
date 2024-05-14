@@ -1,8 +1,8 @@
 #pragma once
 
 #include <LiquidCrystal.h>
-#include <TestStrip/TestStrip.h>
 
+#include "TestStrip/TestStrip.h"
 #include "ButtonConfiguration.h"
 #include "InteractionResult.h"
 

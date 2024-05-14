@@ -1,30 +1,30 @@
 #pragma once
 
-#include "ButtonConfiguration.h"
 #include <LiquidCrystal.h>
 
+#include "ButtonConfiguration.h"
 #include "TestStrip.h"
 
 class TestStripMenu
 {
 public:
-    TestStripMenu(LiquidCrystal& lcd, ButtonConfiguration& button_configuration)
-        : lcd(lcd),
-          buttonConfiguration(button_configuration)
-    {
-    }
+	TestStripMenu(LiquidCrystal& lcd, ButtonConfiguration& button_configuration)
+		: lcd(lcd),
+		  buttonConfiguration(button_configuration)
+	{
+	}
 
-    bool run(TestStrip& outTestStrip);
+	bool run(TestStrip& outTestStrip);
 
 private:
-    LiquidCrystal& lcd;
-    ButtonConfiguration& buttonConfiguration;
+	LiquidCrystal& lcd;
+	ButtonConfiguration& buttonConfiguration;
 
-    enum TestStripMenuStates
-    {
-        STRIP_COUNT,
-        TIME,
-        INTERVAL_STEP,
-        DONE
-    };
+	enum TestStripMenuStates
+	{
+		STRIP_COUNT,
+		TIME,
+		INTERVAL_STEP,
+		DONE
+	};
 };
