@@ -46,6 +46,7 @@ bool TestStripExposer::exposeTestStrips(TestStrip &testStripConfig)
     lcd.setCursor(0, 1);
     lcd.print("complete");
 
+    testStripConfig.printTestStripFooter(lcd);
     return true;
 }
 
@@ -81,9 +82,14 @@ void TestStripExposer::printExposureInformation(int stripNumber, int stripCount,
 
 void TestStripExposer::waitStart()
 {
-    while (digitalRead(buttonConfig.startStopButton) == HIGH)
+    while (true)
     {
-        delay(50);
+        ButtonConfiguration::Button button = buttonConfig.waitForButtonPress();
+
+        if (button == ButtonConfiguration::Button::StartStop)
+        {
+            return;
+        }
     }
 }
 
@@ -132,7 +138,7 @@ void TestStripExposer::expose(double time)
             lastLCDUpdate = currentTime;
         }
 
-        beepOnSecond(elapsedTime);
+        beepOnSecond(time * 1000 - elapsedTime);
 
         delay(1);
     }
